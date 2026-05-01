@@ -5,7 +5,7 @@
 
 <template>
     <section class="grid grid-cols-4">
-        <SidersBar class="col-span-1"/>
+        <SidersBar @exitGroup="" class="col-span-1"/>
         <MainAreaChat class="col-span-3 col-start-2"/>
     </section>
 </template>
