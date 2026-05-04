@@ -39,11 +39,11 @@ const userAll = ref([
 </script>
 
 <template>
-    <article class="flex flex-col gap-4 px-5 py-5 scrollbar-hide scroll-smooth overflow-y-auto ">
+    <article class="flex flex-col pt-10 gap-6 px-2 scrollbar-hide scroll-smooth overflow-y-auto ">
         <section
             class="flex hover:bg-white/10 flex-row justify-between jutify-center items-center w-full"
             v-for="el in userAll" :key="el.id" @click="">
-            <section class="flex flex-row gap-6">
+            <section class="flex flex-row gap-10 items-center">
                 <img :src="el.src" class="w-10 h-10">
                 <p class="text-[18px] text-white font-bold">
                     {{ el.name }}</p>

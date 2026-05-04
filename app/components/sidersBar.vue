@@ -41,44 +41,6 @@ const folderChat = ref([
 
 ])
 
-
-
-function setting() {
-    if(typeSideBar.value == "setting") {
-        typeSideBar.value = "group"
-    } else {
-        typeSideBar.value = "setting"
-    }
-    
-}
-
-function userChat() {
-    
-    if(typeSideBar.value == "chat") {
-        typeSideBar.value = "group"
-    } else {
-        typeSideBar.value = "chat"
-    }
-}
-
-function archive() {
-    
-    if(typeSideBar.value == "archive") {
-        typeSideBar.value = "group"
-    } else {
-        typeSideBar.value = "archive"
-    }
-}
-
-function shop() {
-    
-    if(typeSideBar.value == "shop") {
-        typeSideBar.value = "group"
-    } else {
-        typeSideBar.value = "shop"
-    }
-}
-
 function updateTypeSideBar(typeEl:string): void {
     console.log(typeEl)
     console.log(typeSideBar.value)
@@ -201,7 +163,7 @@ function activatedFolder(el: EventTarget | null) {
                     :data-id="el.id">{{ el.name }}</p>
             </section>
         </article>
-        <GroupSideBar v-if='typeSideBar == "group"' />
+        <GroupSideBar @open-chat="(chat: object) => {$emit('openGroup', chat)}" v-if='typeSideBar == "group"' />
         <UserSideBar v-if='typeSideBar == "user"' />
     </section>
 </template>
