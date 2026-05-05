@@ -6,9 +6,9 @@
     const isThemeDefault = ref(true)
 
     function auth() {
-        const auth = new Auth()
+        //const auth = new Auth()
 
-        auth.startAuth({email: emailUser.value, password: passwordUser.value})
+        //auth.startAuth({email: emailUser.value, password: passwordUser.value})
     }
 
     function restructurTheme() {

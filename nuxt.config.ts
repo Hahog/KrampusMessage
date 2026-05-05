@@ -9,13 +9,13 @@ export default defineNuxtConfig({
   imports: {
     dirs: [
       'types/**',
+      'types/*',
       'shemas/**'
     ]
   },
   vite: {
     plugins: [
       tailwindcss(),
-
     ]
   }
 })

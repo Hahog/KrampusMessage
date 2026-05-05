@@ -1,6 +1,7 @@
 import { useUserStore } from '@/stores/user'
 import type { AuthRespons } from "../../types/api/respons"
 import type { UserData } from "../../types/forms"
+import type { User } from '~~/types/other'
 
 
 class Auth {
@@ -72,8 +73,8 @@ class Auth {
         }
     }
 
-    public async isAuthenticated(user: Ref): Promise<AuthRespons> {
-        if (!user.value) {
+    public async isAuthenticated(user: User): Promise<AuthRespons> {
+        if (!user.id) {
             return {sucess: false}
         }
         const promis = await fetch("", {
@@ -81,7 +82,7 @@ class Auth {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({email: user.value.email, password: user.value.password})
+            body: JSON.stringify({email: user.email, password: user.password})
         })
 
         if(promis.ok) {

@@ -185,34 +185,15 @@ function optionGroup() { }
                 <section class="flex flex-col gap-2 px-5 text-[22px] text-white"
                     v-for="el in Object.keys(activeGroup.chat)" :key="activeGroup.id">
                     <article @click="($event) => {
-                        console.log(($event.target as HTMLElement)?.tagName);
-                        if (($event.target as HTMLElement)?.tagName == 'P') {
-                            if (($event.target as HTMLElement)?.parentElement?.children[0]?.classList.contains('rotate-90')) {
-                                ($event.target as HTMLElement)?.parentElement?.parentElement?.children[1]?.classList.remove('hidden');
-                                ($event.target as HTMLElement)?.parentElement?.children[0]?.classList.remove('rotate-90');
-                            } else {
-                                ($event.target as HTMLElement)?.parentElement?.parentElement?.children[1]?.classList.add('hidden');
-                                ($event.target as HTMLElement)?.parentElement?.children[0]?.classList.add('rotate-90');
-                            }
-
-                        } else if (($event.target as HTMLElement)?.tagName == 'svg') {
-                            if (($event.target as HTMLElement)?.classList.contains('rotate-90')) {
-                                ($event.target as HTMLElement)?.parentElement?.parentElement?.children[1]?.classList.remove('hidden');
-                                ($event.target as HTMLElement)?.classList.remove('rotate-90');
-                            } else {
-                                ($event.target as HTMLElement)?.parentElement?.parentElement?.children[1]?.classList.add('hidden');
-                                ($event.target as HTMLElement)?.classList.add('rotate-90');
-                            }
-                        } else if (($event.target as HTMLElement)?.tagName == 'ARTICLE') {
-                            if (($event.target as HTMLElement)?.children[0]?.classList.contains('rotate-90')) {
-                                ($event.target as HTMLElement)?.parentElement?.children[1]?.classList.remove('hidden');
-                                ($event.target as HTMLElement)?.children[0]?.classList.remove('rotate-90');
-                            } else {
-                                ($event.target as HTMLElement)?.parentElement?.children[1]?.classList.add('hidden');
-                                ($event.target as HTMLElement)?.children[0]?.classList.add('rotate-90');
-                            }
-
+                        const el = ($event.currentTarget as HTMLElement)
+                        if (el?.children[0]?.classList.contains('rotate-90')) {
+                            el?.parentElement?.children[1]?.classList.remove('hidden');
+                            el?.children[0]?.classList.remove('rotate-90');
+                        } else {
+                            el?.parentElement?.children[1]?.classList.add('hidden');
+                            el?.children[0]?.classList.add('rotate-90');
                         }
+
                     }" class="flex flex-row justify-start gap-5 mb-2 items-center hover:bg-white/10 p-2">
                         <svg class="fill-white/100 rotate-90" width="25" height="15" viewBox="0 0 25 15" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -224,7 +205,8 @@ function optionGroup() { }
                     </article>
                     <article class="flex flex-col gap-2 hidden">
                         <article class="flex flex-row hover:bg-white/10 p-2 justify-between pl-5  items-center"
-                            @click='$emit("openChat", chat)' v-for="chat in Object.keys(activeGroup.chat[el])" :key="activeGroup.chat[el].id">
+                            @click='$emit("openChat", chat)' v-for="chat in Object.keys(activeGroup.chat[el])"
+                            :key="activeGroup.chat[el].id">
                             <section class="flex flex-row gap-5 justify-start items-center">
                                 <svg v-if="activeGroup.chat[el][chat].type == 'chat'" width="30" height="26"
                                     viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">

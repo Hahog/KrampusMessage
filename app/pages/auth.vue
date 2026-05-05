@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { Auth } from '~/composabels/Auth';
+    //import { Auth } from '~/composabels/Auth';
 
     const router = useRouter()
     let emailUser = ref()
