@@ -117,7 +117,7 @@ function optionGroup() { }
             'min-h-full': true,
             'flex-col': true,
             'border-r-3': activeGroup,
-            'border-body-500': activeGroup,
+            'border-body-100': activeGroup,
             'gap-6': true,
             'pl-2': !activeGroup,
             'px-2': activeGroup,
@@ -158,7 +158,7 @@ function optionGroup() { }
             'hidden': !activeGroup,
             'animate-group': activeGroup,
         }">
-            <article class="flex flex-row justify-between px-4 py-2 border-b-4 border-body-500">
+            <article class="flex flex-row justify-between px-4 py-2 border-b-4 border-body-100">
                 <section class="flex flex-col gap-1 text-start">
                     <h2 class="text-[26px] text-white/80">{{ activeGroup.name }}</h2>
                     <p class="text-[16px] text-white">{{ activeGroup.user }} members</p>

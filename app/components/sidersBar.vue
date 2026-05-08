@@ -96,7 +96,7 @@ function activatedFolder(el: EventTarget | null) {
 
 
 <template>
-    <section class="flex flex-col bg-body-100 w-full h-screen">
+    <section class="flex flex-col bg-body-500 w-full h-screen">
         <article class="w-full flex flex-col gap-5 pt-5 bg-body-900 rounded-br-4xl">
             <section
                 :class='{ "flex": true, "flex-row": true, "justify-between": true, "px-15": true, "pb-5": (typeSideBar != "group" && typeSideBar != "user") }'>

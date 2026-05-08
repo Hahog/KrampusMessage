@@ -3,6 +3,7 @@ import type { genericRef, Setting, User } from "../../../types/other"
 const userStor: genericRef<User> = ref()
 const settingStore: genericRef<Setting> = ref()
 const newDataUser: genericRef<User> = ref({
+    id: 0,
     name: "",
     secondName: "",
     userName: "",
@@ -10,7 +11,9 @@ const newDataUser: genericRef<User> = ref({
     birthday: "",
     country: "",
     bio: "",
-    logo: ""
+    logo: "",
+    email: "",
+    password: ""
 })
 
 function openDropOption(el: HTMLElement) {
@@ -38,7 +41,7 @@ onUpdated(() => {
         <section class="w-full text-center">
             <h1 class="text-[22px] text-white font-bold">Setting</h1>
         </section>
-        <section class="flex flex-col py-4 gap-5 px-7 bg-body-500 rounded-md">
+        <section class="flex flex-col py-4 gap-5 px-7 bg-body-100 rounded-xl">
             <article class="flex flex-row justify-start items-center gap-5">
                 <section class="w-10 h-fit">
                     <img class="w-10 h-fit" :src="userStor?.logo ? userStor?.logo : ''" alt="logoUser">
@@ -76,19 +79,19 @@ onUpdated(() => {
                     </svg>
                 </section>
                 <section class="flex flex-col gap-5 hidden">
-                    <input placeholder="New Name" type="text" v-model="newDataUser.name"
+                    <input placeholder="New Name" type="text" v-model="(newDataUser as User).name"
                         class="w-full px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white" />
-                    <input placeholder="New Secondname" type="text" v-model="newDataUser.secondName"
+                    <input placeholder="New Secondname" type="text" v-model="(newDataUser as User).secondName"
                         class="w-full px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white" />
-                    <input placeholder="New Username" type="text" v-model="newDataUser.userName"
+                    <input placeholder="New Username" type="text" v-model="(newDataUser as User).userName"
                         class="w-full px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white" />
-                    <input placeholder="New Phone" type="text" v-model="newDataUser.phone"
+                    <input placeholder="New Phone" type="text" v-model="(newDataUser as User).phone"
                         class="w-full px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white" />
-                    <input placeholder="New Birthday" type="text" v-model="newDataUser.birthday"
+                    <input placeholder="New Birthday" type="text" v-model="(newDataUser as User).birthday"
                         class="w-full px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white" />
-                    <input placeholder="New Country" type="text" v-model="newDataUser.country"
+                    <input placeholder="New Country" type="text" v-model="(newDataUser as User).country"
                         class="w-full px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white" />
-                    <textarea placeholder="New Bio" v-model="newDataUser.bio"
+                    <textarea placeholder="New Bio" v-model="(newDataUser as User).bio"
                         class="scrollbar-hide scroll-smooth w-full h-15 px-5 py-2 text-white text-[18px] bg-body-900 rounded-full placeholder:text-white"></textarea>
                     <article class="flex flex-col gap-5">
                         <section class="flex flex-row justify-between w-full items-center">
@@ -131,7 +134,7 @@ onUpdated(() => {
 
             </article>
         </section>
-        <section class="flex flex-col gap-5 bg-body-500 px-7 py-4 rounded-md">
+        <section class="flex flex-col gap-5 bg-body-100 px-7 py-4 rounded-xl">
             <article class="flex flex-col gap-5">
                 <section class="flex flex-row items-center justify-between">
                     <article class="flex flex-row gap-5 items-center">
@@ -244,7 +247,239 @@ onUpdated(() => {
                 </section>
             </article>
         </section>
-
+        <section class="flex flex-col gap-5 bg-body-100 px-7 py-4 rounded-xl">
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12.001 1.6001C15.2043 1.60026 17.8018 4.19747 17.8018 7.40088C17.8016 9.86759 16.2612 11.9719 14.0918 12.811V13.1392L15.7412 14.7886C16.0144 15.0619 16.0145 15.5045 15.7412 15.7778L13.918 17.6011L15.2783 18.9614C15.5442 19.2277 15.552 19.6573 15.2959 19.9331L12.2822 23.1782C12.1474 23.3234 11.9569 23.4047 11.7588 23.4019C11.5608 23.3989 11.3727 23.3125 11.2422 23.1636L9.61914 21.3081C9.50768 21.1806 9.44634 21.0165 9.44629 20.8472V12.6089C7.52484 11.6647 6.20031 9.68837 6.2002 7.40088C6.2002 4.19737 8.79746 1.6001 12.001 1.6001ZM12.001 3.00049C9.57066 3.00049 7.60059 4.97056 7.60059 7.40088C7.60071 9.2653 8.76035 10.8608 10.4004 11.5015C10.6688 11.6064 10.8457 11.8656 10.8457 12.1538V20.5835L11.7842 21.6567L13.8105 19.4741L12.4336 18.0972C12.1602 17.8238 12.1602 17.3803 12.4336 17.1069L14.2568 15.2827L12.8965 13.9233C12.7655 13.7921 12.6924 13.6136 12.6924 13.4282V12.3091C12.6925 11.996 12.8999 11.7205 13.2012 11.6353C15.0484 11.1127 16.4012 9.41395 16.4014 7.40088C16.4014 4.97067 14.4311 3.00066 12.001 3.00049ZM12.001 4.61865C12.641 4.61882 13.1602 5.13773 13.1602 5.77783C13.1601 6.41787 12.641 6.93684 12.001 6.93701C11.3608 6.93701 10.8419 6.41797 10.8418 5.77783C10.8418 5.13762 11.3608 4.61865 12.001 4.61865Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Account</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <section class="flex flex-col gap-4 pl-5 hidden">
+                    <p class="text-[20px] text-white" @click.stop="">Export Data</p>
+                    <p class="text-[20px] text-red-500" @click.stop="">Delete Account</p>
+                </section>
+            </article>
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 3.7998C14.3195 3.79991 16.2002 5.68047 16.2002 8V10.3125C17.0446 10.4117 17.7002 11.129 17.7002 12V18.5C17.7001 19.4387 16.9387 20.2001 16 20.2002H8C7.06118 20.2002 6.29991 19.4388 6.2998 18.5V12C6.2998 11.1288 6.95521 10.4116 7.7998 10.3125V8C7.7998 5.6804 9.6804 3.7998 12 3.7998ZM8 11.7002C7.83431 11.7002 7.7002 11.8343 7.7002 12V18.5C7.7003 18.6656 7.83438 18.7998 8 18.7998H16C16.1655 18.7997 16.2997 18.6655 16.2998 18.5V12C16.2998 11.8344 16.1656 11.7003 16 11.7002H8ZM12 5.2002C10.4536 5.2002 9.2002 6.4536 9.2002 8V10.2998H14.7998V8C14.7998 6.45367 13.5463 5.2003 12 5.2002Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Account</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <section class="flex flex-col gap-4 pl-5 hidden">
+                    <p class="text-[20px] text-white" @click.stop="">Blocked User</p>
+                    <p class="text-[20px] text-white" @click.stop="">Two-Step Verification</p>
+                    <p class="text-[20px] text-white" @click.stop="">Passkeys</p>
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Delete My Account If Away For</p>
+                        <p class="text-[16px] text-white/50" @click.stop="">18 month</p>
+                    </article>
+                </section>
+            </article>
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.9707 3.30005C14.8205 3.30009 17.4386 4.10033 19.3623 5.5022C21.2929 6.90917 22.5409 8.94163 22.541 11.3479C22.5409 16.1652 17.6416 19.8029 11.9707 19.803C11.6313 19.803 11.2954 19.7889 10.9639 19.7639C9.71597 20.964 8.44552 21.5752 7.47266 21.884C6.98316 22.0394 6.56934 22.1183 6.27246 22.1584C6.12434 22.1785 6.00475 22.1892 5.91895 22.1946C5.8761 22.1973 5.84092 22.1987 5.81543 22.1995C5.80286 22.1998 5.79229 22.2003 5.78418 22.2004H5.7666C5.52139 22.2004 5.29371 22.0715 5.16699 21.8616C5.04051 21.6517 5.03328 21.3909 5.14746 21.1741L5.14844 21.1731C5.14901 21.172 5.15003 21.1698 5.15137 21.1672C5.15406 21.1621 5.15754 21.1536 5.16309 21.1428C5.17427 21.1212 5.19172 21.0882 5.21289 21.0461C5.25528 20.962 5.31507 20.84 5.38477 20.6926C5.52524 20.3956 5.70155 20.0009 5.85059 19.5989C6.0034 19.1866 6.11148 18.8096 6.1416 18.5354C6.14728 18.4835 6.14747 18.4403 6.14746 18.4055C5.88795 18.2685 5.63389 18.1256 5.39062 17.9709C3.00286 16.4528 1.40047 14.0776 1.40039 11.3479C1.40047 8.94154 2.64834 6.90918 4.5791 5.5022C6.50289 4.10032 9.12081 3.30005 11.9707 3.30005ZM11.9707 4.70044C9.36952 4.70044 7.05181 5.43277 5.40332 6.63403C3.76217 7.83012 2.80085 9.47158 2.80078 11.3479C2.80086 13.4905 4.05808 15.4641 6.14258 16.7893C6.39374 16.949 6.65639 17.0995 6.92969 17.2385C7.25937 17.4064 7.42457 17.6981 7.49512 17.9602C7.56173 18.2079 7.55759 18.4665 7.5332 18.6887C7.48396 19.1369 7.32738 19.643 7.16309 20.0862C7.10148 20.2523 7.03487 20.4154 6.96973 20.5715C6.99556 20.5637 7.02239 20.5575 7.04883 20.5491C7.85428 20.2934 8.94124 19.7775 10.0215 18.7297L10.125 18.6389C10.3418 18.4691 10.6091 18.3709 10.8877 18.3625L11.0273 18.3665L11.4961 18.3938C11.6532 18.4 11.8116 18.4036 11.9707 18.4036C17.2017 18.4035 21.1405 15.0963 21.1406 11.3479C21.1406 9.47166 20.1791 7.8301 18.5381 6.63403C16.8896 5.43278 14.5718 4.70048 11.9707 4.70044Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Chats</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <section class="flex flex-col gap-4 pl-5 hidden">
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Change Wallpaper</p>
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            @click.stop=''>
+                            <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </article>
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Chat Backup</p>
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            @click.stop=''>
+                            <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </article>
+                    <form class="flex flex-col gap-4">
+                        <label class="flex flex-row justify-between items-center text-[20px] text-white">
+                            Light Theme
+                            <input name="theme" type="radio" class="w-4 h-4">
+                        </label>
+                        <label class="flex flex-row justify-between items-center text-[20px] text-white">
+                            Dark Theme
+                            <input name="theme" type="radio" class="w-4 h-4">
+                        </label>
+                    </form>
+                    <p class="text-[20px] text-blue-500" @click.stop="">Archive All Chats</p>
+                    <p class="text-[20px] text-red-500" @click.stop="">Clear All Chats</p>
+                    <p class="text-[20px] text-red-500" @click.stop="">Delete All Chats</p>
+                </section>
+            </article>
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M14.0107 4.30029C13.8874 4.71526 13.8204 5.15485 13.8203 5.60986C13.8203 5.63993 13.8217 5.67076 13.8223 5.70068H7C6.28203 5.70068 5.7002 6.28252 5.7002 7.00049V17.0005C5.70052 17.7182 6.28223 18.3003 7 18.3003H17C17.7177 18.3002 18.2995 17.7181 18.2998 17.0005V10.1968C18.3364 10.1976 18.3734 10.1997 18.4102 10.1997C18.8582 10.1997 19.2908 10.1339 19.7002 10.0142V17.0005C19.6999 18.4913 18.4909 19.7006 17 19.7007H7C5.50903 19.7007 4.30012 18.4914 4.2998 17.0005V7.00049C4.2998 5.50932 5.50883 4.30029 7 4.30029H14.0107ZM18.4102 2.60986C20.0668 2.61013 21.4102 3.95317 21.4102 5.60986C21.4102 7.26655 20.0668 8.6096 18.4102 8.60986C16.7533 8.60986 15.4102 7.26672 15.4102 5.60986C15.4102 3.95301 16.7533 2.60986 18.4102 2.60986Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Notification</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <form class="flex flex-col gap-4 pl-5 hidden">
+                    <label class="flex flex-row justify-between items-center text-[20px] text-white">
+                        Notification for chat
+                        <input name="Notification" type="radio" class="w-4 h-4">
+                    </label>
+                    <label class="flex flex-row justify-between items-center text-[20px] text-white">
+                        Sound
+                        <input name="Sound" type="radio" class="w-4 h-4">
+                    </label>
+                </form>
+            </article>
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M7.38379 4.56372C7.51608 4.58937 7.64268 4.65371 7.74512 4.7561L12.2451 9.2561C12.5183 9.52945 12.5183 9.97303 12.2451 10.2463C11.9718 10.5196 11.5283 10.5195 11.2549 10.2463L7.9502 6.94165V19.7512C7.95009 20.1377 7.63644 20.4513 7.25 20.4514C6.86347 20.4514 6.54991 20.1377 6.5498 19.7512V6.94165L3.24512 10.2463C2.97182 10.5196 2.52827 10.5195 2.25488 10.2463C1.98161 9.97296 1.98155 9.52944 2.25488 9.2561L6.75488 4.7561C6.85742 4.65361 6.98378 4.58932 7.11621 4.56372C7.2045 4.54666 7.29551 4.54661 7.38379 4.56372ZM16.75 4.55005C17.1364 4.55026 17.4501 4.86387 17.4502 5.25024V18.0598L20.7549 14.7551C21.0282 14.4818 21.4717 14.482 21.7451 14.7551C22.0181 15.0285 22.0184 15.4721 21.7451 15.7454L17.2451 20.2454C17.1426 20.3478 17.0161 20.4121 16.8838 20.4377C16.7956 20.4548 16.7044 20.4548 16.6162 20.4377C16.484 20.4121 16.3573 20.3476 16.2549 20.2454L11.7549 15.7454C11.4817 15.472 11.4816 15.0284 11.7549 14.7551C12.0282 14.4818 12.4717 14.482 12.7451 14.7551L16.0498 18.0598V5.25024C16.0499 4.8638 16.3636 4.55015 16.75 4.55005Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Storage and data</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <section class="flex flex-col gap-4 pl-5 hidden">
+                    <p class="text-[20px] text-white" @click.stop="">Cache and Files</p>
+                    <p class="text-[20px] text-white" @click.stop="">Usage Stats</p>
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Auto-Cleanup</p>
+                        <p class="text-[16px] text-white/50" @click.stop="">1 month</p>
+                    </article>
+                    <p class="text-[20px] text-white" @click.stop="">Backup</p>
+                </section>
+            </article>
+        </section>
+        <section class="flex flex-col gap-5 bg-body-100 px-7 py-4 rounded-xl"> 
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 3.7998C16.8048 3.79991 20.7002 7.69519 20.7002 12.5C20.7001 17.3047 16.8047 21.2001 12 21.2002C7.19519 21.2002 3.29991 17.3048 3.2998 12.5C3.2998 7.69512 7.19512 3.7998 12 3.7998ZM12 5.2002C7.96832 5.2002 4.7002 8.46832 4.7002 12.5C4.7003 16.5316 7.96839 19.7998 12 19.7998C16.0315 19.7997 19.2997 16.5315 19.2998 12.5C19.2998 8.46839 16.0316 5.2003 12 5.2002ZM12.4492 10.8008C12.8358 10.8008 13.1494 11.1144 13.1494 11.501V15.7998H14.3496C14.7361 15.7999 15.0498 16.1135 15.0498 16.5C15.0497 16.8864 14.7361 17.2001 14.3496 17.2002H12.459C12.4559 17.2003 12.4523 17.2012 12.4492 17.2012C12.4461 17.2011 12.4426 17.2002 12.4395 17.2002H10.3496C9.96324 17.2 9.64952 16.8864 9.64941 16.5C9.64941 16.1135 9.96317 15.8 10.3496 15.7998H11.749V12.2012H10.8994C10.5132 12.2008 10.1994 11.8872 10.1992 11.501C10.1992 11.1146 10.5131 10.8011 10.8994 10.8008H12.4492ZM12.0498 7C12.7402 7 13.2998 7.55964 13.2998 8.25C13.2998 8.94035 12.7402 9.5 12.0498 9.5C11.3595 9.5 10.7998 8.94035 10.7998 8.25C10.7998 7.55964 11.3594 7 12.0498 7Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Help</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <section class="flex flex-col gap-4 pl-5 hidden">
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Cache and Files</p>
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            @click.stop=''>
+                            <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </article>
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Contact Support</p>
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            @click.stop=''>
+                            <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </article>
+                    <p class="text-[20px] text-white" @click.stop="">App Version</p>
+                    <article class="flex flex-row justify-between items-center">
+                        <p class="text-[20px] text-white" @click.stop="">Report Bug</p>
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            @click.stop=''>
+                            <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </article>
+                </section>
+            </article>
+            <article class="flex flex-col gap-5">
+                <section class="flex flex-row items-center justify-between">
+                    <article class="flex flex-row gap-5 items-center">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M15.4229 3.89014C18.7703 3.89035 21.292 6.60241 21.292 10.1577C21.2919 12.26 20.4006 14.0803 19.0068 15.6938C17.6305 17.2871 15.7062 18.748 13.4854 20.1782L13.4766 20.1841C13.3241 20.2806 13.1285 20.3942 12.915 20.4878C12.7318 20.5681 12.3946 20.6986 12.001 20.6987C11.609 20.6987 11.2702 20.5665 11.0938 20.4897C10.8818 20.3975 10.6838 20.2844 10.5254 20.1841L10.5166 20.1782C8.29589 18.7481 6.3714 17.287 4.99512 15.6938C3.60138 14.0803 2.71007 12.26 2.70996 10.1577C2.70996 6.59898 5.24233 3.89014 8.58691 3.89014C9.9662 3.89023 11.116 4.40031 12 5.19678C12.8852 4.39789 14.0359 3.89014 15.4229 3.89014ZM15.4229 5.29053C13.8682 5.29053 12.7041 6.1499 12.001 7.43896C11.3057 6.15782 10.1336 5.29067 8.58691 5.29053C6.09473 5.29053 4.11035 7.29053 4.11035 10.1577C4.11057 13.5013 6.9074 16.1891 11.2744 19.0015C11.5087 19.1498 11.8058 19.2983 12.001 19.2983C12.2041 19.2982 12.4933 19.1498 12.7275 19.0015C17.0945 16.1891 19.8914 13.5013 19.8916 10.1577C19.8916 7.29068 17.9149 5.29074 15.4229 5.29053Z"
+                                fill="white" />
+                        </svg>
+                        <p class="text-[20px] text-white">Invite a friend</p>
+                    </article>
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        @click.stop='
+                            openDropOption(($event.currentTarget as HTMLElement))
+                            '>
+                        <path d="M10.5 7.5L15 12L10.5 16.5" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </section>
+                <section class="flex flex-col gap-4 pl-5 hidden">
+                    <p class="text-[20px] text-white" @click.stop="">Share Link</p>
+                    <p class="text-[20px] text-white" @click.stop="">Invite Contacts</p>
+                    <p class="text-[20px] text-white" @click.stop="">Referral Bonuses</p>
+                    <p class="text-[20px] text-white" @click.stop="">Invite History</p>
+                </section>
+            </article>
+        </section>
     </article>
 </template>
 

@@ -2,9 +2,9 @@
 @import "tailwind-scrollbar-hide/v4";
 
 @theme {
-    --color-body-100: #27282B;
+    --color-body-500: #27282B;
     --color-body-900: #1C1C1F;
-    --color-body-500: #313338;
+    --color-body-100: #313338;
 
     --animate-group: groupOpen 2s ease-in-out 1;
 
