@@ -26,4 +26,7 @@
 
 body {
     background-color: --color-body-900;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: hidden;
 }

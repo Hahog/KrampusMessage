@@ -6,8 +6,8 @@
 
 
 <template>
-    <section class="grid grid-cols-4">
-        <SidersBar @exitGroup="" class="col-span-1" />
+    <section class="grid grid-cols-4 h-screen box-border">
+        <SidersBar @exitGroup="" class="col-span-1 h-screen box-border" />
         <MainAreaChat class="col-span-3 col-start-2" />
     </section>
 </template>

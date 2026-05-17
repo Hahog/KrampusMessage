@@ -40,6 +40,57 @@ const groupsAll = ref([
                     newMessage: false,
                 },
             },
+            Three: {
+                New: {
+                    type: "chat",
+                    id: 1,
+                    newMessage: true,
+                },
+                Bag: {
+                    type: "chat",
+                    id: 2,
+                    newMessage: false,
+                },
+                BagTwo: {
+                    type: "voice",
+                    id: 2,
+                    newMessage: false,
+                },
+            },
+            Four: {
+                New: {
+                    type: "chat",
+                    id: 1,
+                    newMessage: true,
+                },
+                Bag: {
+                    type: "chat",
+                    id: 2,
+                    newMessage: false,
+                },
+                BagTwo: {
+                    type: "voice",
+                    id: 2,
+                    newMessage: false,
+                },
+            },
+            Five: {
+                New: {
+                    type: "chat",
+                    id: 1,
+                    newMessage: true,
+                },
+                Bag: {
+                    type: "chat",
+                    id: 2,
+                    newMessage: false,
+                },
+                BagTwo: {
+                    type: "voice",
+                    id: 2,
+                    newMessage: false,
+                },
+            },
         },
     },
     {
@@ -99,6 +150,72 @@ const groupsAll = ref([
         name: "New",
         id: 11,
     },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+    },
+    
 ]);
 
 const activeGroup = ref();
@@ -107,14 +224,13 @@ function optionGroup() { }
 </script>
 
 <template>
-    <article :class="{ grid: activeGroup, 'grid-cols-5': activeGroup, 'h-full': true }">
+    <article :class="{ grid: activeGroup,'overflow-y-scroll scrollbar-hide scroll-smooth':true, 'grid-cols-5': activeGroup}">
         <section :class="{
-            flex: true,
+            'flex': true,
             'justify-start': activeGroup,
             'items-center': activeGroup,
-            'overflow-y-auto': true,
+            'overflow-y-scroll scrollbar-hide scroll-smooth': true,
             'pt-10': true,
-            'min-h-full': true,
             'flex-col': true,
             'border-r-3': activeGroup,
             'border-body-100': activeGroup,
@@ -122,8 +238,6 @@ function optionGroup() { }
             'pl-2': !activeGroup,
             'px-2': activeGroup,
             'w-full': !activeGroup,
-            'scrollbar-hide': true,
-            'scroll-smooth': true,
         }">
             <article :class="{
                 flex: true,
@@ -143,7 +257,7 @@ function optionGroup() { }
                     'text-[18px]': true,
                     'text-white': true,
                     'font-bold': true,
-                    hidden: activeGroup,
+                    'hidden': activeGroup,
                 }">
                     {{ el.name }}
                 </p>
@@ -157,7 +271,10 @@ function optionGroup() { }
             'gap-5': activeGroup,
             'hidden': !activeGroup,
             'animate-group': activeGroup,
+            'relative': activeGroup,
+            'overflow-y-scroll scrollbar-hide scroll-smooth': activeGroup,
         }">
+            
             <article class="flex flex-row justify-between px-4 py-2 border-b-4 border-body-100">
                 <section class="flex flex-col gap-1 text-start">
                     <h2 class="text-[26px] text-white/80">{{ activeGroup.name }}</h2>

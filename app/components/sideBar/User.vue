@@ -34,7 +34,84 @@ const userAll = ref([
         id: 11,
         newMessage: true,
         isFavouritesUser: false
-    }
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
+    {
+        src: "/img/test.png",
+        name: "New",
+        id: 11,
+        newMessage: true,
+        isFavouritesUser: false
+    },
 ])
 </script>
 
