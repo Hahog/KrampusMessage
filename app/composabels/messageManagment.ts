@@ -1,9 +1,27 @@
-const messageData = {
+export class messageManagment{
+    #messageData = [
+        {
+            id: 123,
+            message: {
 
-}
-
-class messageManagment {
+            }
+        }
+    ]
     constructor() {
 
+    }
+
+    createNewMessage() {
+
+    }
+
+    requestAllMessageChat() {
+        /*
+        const respons = fetch('', {
+        
+        })
+        */
+
+        
     }
 }

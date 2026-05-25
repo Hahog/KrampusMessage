@@ -1,11 +1,33 @@
 <script setup lang="ts">
+import { messageManagment } from '~/composabels/messageManagment'
 import type { genericRef } from '~~/types/other'
 
+const activeChat = ref(inject("idChatOpen"))
 
-const typeAreaChat: genericRef<"User" | "Group" | "Voice" | ""> = ref("Group")
+
+
+const typeAreaChat: genericRef<"User" | "Group" | "Voice" | ""> = ref("")
 const activeSearch = ref(false)
 const searchData = ref("")
+watch(activeChat, (newVal, oldVal) => {
+    console.log(activeChat.value)
+    const chat = (activeChat.value as {0:String, 1: object})
+    switch(chat[0]) {
+        case "chat":
+            typeAreaChat.value = "Group"
+            //classMessage = new messageManagment()
+            break
+        case "voice":
+            typeAreaChat.value = "Voice"
+            break
+        case "user":
+            typeAreaChat.value = "User"
+            
+            break
+    }
 
+
+})
 </script>
 
 
@@ -51,9 +73,9 @@ const searchData = ref("")
                 </section>
             </article>
         </article>
-        <MainAreaChatGroup v-if="typeAreaChat == 'Group'" />
-        <MainAreaChatUser v-if="typeAreaChat == 'User'" />
-        <MainAreaChatVoice v-if="typeAreaChat == 'Voice'" />
+        <MainAreaChatGroup :Room="activeChat" v-if="typeAreaChat == 'Group'" />
+        <MainAreaChatUser :Room="activeChat" v-if="typeAreaChat == 'User'" />
+        <MainAreaChatVoice :Room="activeChat" v-if="typeAreaChat == 'Voice'" />
     </section>
 </template>
 

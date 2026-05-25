@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { genericRef, Setting, User } from "../../../types/other"
+import type { genericRef, Setting, User } from "../../../../types/other"
 const userStor: genericRef<User> = ref()
 const settingStore: genericRef<Setting> = ref()
 const newDataUser: genericRef<User> = ref({
-    id: 0,
+    id: "0",
     name: "",
     secondName: "",
     userName: "",

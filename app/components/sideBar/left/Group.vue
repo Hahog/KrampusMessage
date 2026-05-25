@@ -1,226 +1,43 @@
 <script lang="ts" setup>
-const groupsAll = ref([
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        user: 332,
-        chat: {
-            One: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-            Two: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-            Three: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-            Four: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-            Five: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-        },
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        user: 456,
-        chat: {
-            One: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-            Two: {
-                New: {
-                    type: "chat",
-                    id: 1,
-                    newMessage: true,
-                },
-                Bag: {
-                    type: "chat",
-                    id: 2,
-                    newMessage: false,
-                },
-                BagTwo: {
-                    type: "voice",
-                    id: 2,
-                    newMessage: false,
-                },
-            },
-        },
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-    },
-    
-]);
+import { GroupManagment } from '~/composabels/groupManagment';
+import { WebRTC } from '~/composabels/WebRTC';
+
+
+
+let groupClass: GroupManagment;
+const WebSocketCall = ref([])
+const groupName = ref()
+
+onMounted(async () => {
+    groupClass = new GroupManagment()
+
+    groupName.value = await groupClass.requestGroup()
+    console.log(groupName.value)
+})
+
+/*watch(groupName, async (oldValue, newValue) => {
+    if (oldValue !== newValue) {
+        groupName.value = await groupClass.requestGroup()
+        console.log(groupName.value)
+    }
+})*/
 
 const activeGroup = ref();
 
 function optionGroup() { }
+
+function checkUserCall(group: object) {
+    console.log(Object.values(group.chat))
+    Object.values(group.chat).forEach((el) => {
+        if ("id" in el && el.type == "voice") {
+            WebSocketCall.value.push(new WebRTC(el.id))
+        }
+        
+    })
+
+    console.log(WebSocketCall.value)
+}
+
 </script>
 
 <template>
@@ -247,9 +64,11 @@ function optionGroup() { }
                 'jutify-center': true,
                 'items-center': true,
                 'w-full': !activeGroup,
-            }" v-for="el in groupsAll" :key="el.id" @click="
+            }" v-for="el in groupName" :key="el.id" @click.stop="
                 () => {
-                    activeGroup = el;
+                    activeGroup = groupClass.openGroup(el.id);
+                    checkUserCall(activeGroup)
+                    console.log(activeGroup)
                 }
             ">
                 <img :src="el.src" class="w-10 h-10" />
@@ -322,10 +141,10 @@ function optionGroup() { }
                     </article>
                     <article class="flex flex-col gap-2 hidden">
                         <article class="flex flex-row hover:bg-white/10 p-2 justify-between pl-5  items-center"
-                            @click='$emit("openChat", chat)' v-for="chat in Object.keys(activeGroup.chat[el])"
+                            @click='$emit("openChat", [activeGroup.chat[chat].type,activeGroup.chat[chat]])' v-for="chat in Object.keys(activeGroup.chat)"
                             :key="activeGroup.chat[el].id">
                             <section class="flex flex-row gap-5 justify-start items-center">
-                                <svg v-if="activeGroup.chat[el][chat].type == 'chat'" width="30" height="26"
+                                <svg v-if="activeGroup.chat[chat].type == 'chat'" width="30" height="26"
                                     viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M7.51444 2.13923C5.24165 3.56915 3.52251 5.66358 2.61795 8.10463C1.71338 10.5457 1.67276 13.2001 2.50226 15.6651C2.73218 16.385 2.70919 17.1485 2.27234 17.7594L0.364038 20.6391C0.141344 20.9684 0.0161075 21.3485 0.00145149 21.7396C-0.0132045 22.1307 0.0832618 22.5183 0.280739 22.8618C0.478216 23.2053 0.769432 23.4921 1.12388 23.6922C1.47832 23.8922 1.88294 23.9981 2.29534 23.9987H14.9407C18.3478 24.0454 21.6353 22.8088 24.0832 20.5597C26.531 18.3106 27.9395 15.2326 28 12C27.9395 8.7674 26.531 5.68935 24.0832 3.4403C21.6353 1.19124 18.3478 -0.0454209 14.9407 0.00127599C12.1817 0.00127599 9.60668 0.786646 7.51444 2.13923Z"
@@ -340,9 +159,9 @@ function optionGroup() { }
                                         d="M18.95 17.8862C18.2375 18.1895 17.5 17.6695 17.5 16.987V16.8353C17.5 16.3695 17.85 15.9687 18.2875 15.7303C18.8138 15.4357 19.2465 15.0315 19.5462 14.5546C19.8458 14.0777 20.0028 13.5433 20.0028 13.0003C20.0028 12.4573 19.8458 11.923 19.5462 11.4461C19.2465 10.9692 18.8138 10.565 18.2875 10.2703C17.85 10.0212 17.5 9.62032 17.5 9.16532V9.01365C17.5 8.33115 18.2375 7.82199 18.95 8.11449C20.0135 8.55564 20.9113 9.24848 21.5397 10.113C22.1682 10.9776 22.5016 11.9785 22.5016 13.0003C22.5016 14.0221 22.1682 15.0231 21.5397 15.8876C20.9113 16.7522 20.0135 17.445 18.95 17.8862Z"
                                         fill="white" />
                                 </svg>
-                                <p>{{ chat }}</p>
+                                <p>{{ activeGroup.chat[chat].name }}</p>
                             </section>
-                            <div class="p-2 bg-white rounded-full" v-if="activeGroup.chat[el][chat].newMessage"></div>
+                            <div class="p-2 bg-white rounded-full" v-if="activeGroup.chat[chat].newMessage"></div>
                         </article>
                     </article>
                 </section>

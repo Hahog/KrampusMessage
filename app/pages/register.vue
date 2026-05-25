@@ -25,7 +25,7 @@
             <input class="border-1 text-white border-white bg-inherit hover:bg-white/10 px-10 py-3 text-[20px] placeholder:text-white/10" type="text" placeholder="Login" required v-model="loginUser"></input>
             <input class="border-1 text-white border-white bg-inherit hover:bg-white/10 px-10 py-3 text-[20px] placeholder:text-white/10" type="email" placeholder="Email" required v-model="emailUser"></input>
             <input class="border-1 text-white border-white bg-inherit hover:bg-white/10 px-10 py-3 text-[20px] placeholder:text-white/10" type="password" placeholder="Password" required minlength="8" v-model="passwordUser"></input>
-            <button class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-1/2 " @click.prevent="register()">Войти</button>
+            <button class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-1/2 " @click.prevent="register()">Зарегистрироваться</button>
         </form>
         <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="auth">Есть аккаунт? Войдите!</NuxtLink>
     </section>

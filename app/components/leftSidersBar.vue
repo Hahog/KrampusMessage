@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 
 const typeSideBar = ref("user")
-const emits = defineEmits(["openFolder", "openGroup"])
+const emits = defineEmits(["openFolder", "openChat"])
 
 const folderChat = ref([
     {
@@ -176,9 +176,9 @@ function activatedFolder(el: EventTarget | null) {
                     :data-id="el.id">{{ el.name }}</p>
             </section>
         </article>
-        <SideBarGroup @open-chat="(chat: object) => { $emit('openGroup', chat) }" v-if='typeSideBar == "group"' />
-        <SideBarUser v-if='typeSideBar == "user"' />
-        <SideBarSetting v-if='typeSideBar == "setting"' />
+        <SideBarLeftGroup @open-chat="(chat: Number) => { $emit('openChat', chat) }" v-if='typeSideBar == "group"' />
+        <SideBarLeftUser v-if='typeSideBar == "user"' />
+        <SideBarLeftSetting v-if='typeSideBar == "setting"' />
     </section>
 </template>
 
