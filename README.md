@@ -43,8 +43,7 @@ KrampusMessage/
 │ └── app.vue # Корневой компонент
 ├── server/
 │ └── api/ # Go-сервер сигналинга
-│ ├── main.go # Точка входа, обработка WebSocket
-│ └── handlers/ # (опционально) обработчики комнат
+│   └── main.go # Точка входа, обработка WebSocket
 ├── schemas/ # TypeScript-интерфейсы (message.ts, user.ts)
 ├── types/ # Глобальные типы (signaling.ts)
 ├── public/ # Статика (favicon, robots.txt)
