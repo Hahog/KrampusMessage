@@ -1,6 +1,5 @@
 # 🎄 KrampusMessage
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green)](https://nodejs.org/)
 [![Go](https://img.shields.io/badge/Go-1.21+-blue)](https://golang.org/)
 
@@ -32,6 +31,7 @@
 ---
 
 ## 📁 Структура проекта
+```
 KrampusMessage/
 ├── app/ # Клиентская часть (Nuxt)
 │ ├── assets/ # SCSS/CSS, изображения
@@ -52,10 +52,7 @@ KrampusMessage/
 ├── package.json # Зависимости фронтенда
 ├── tsconfig.json # Настройки TypeScript
 └── .gitignore
-
-text
-
----
+```
 
 ## 🚀 Быстрый старт
 
@@ -71,7 +68,12 @@ text
 git clone https://github.com/Hahog/KrampusMessage.git
 cd KrampusMessage
 ```
-### 2. Запуск клиента (Nuxt 3)
+
+### 2. Запуск клиента (Nuxt 4)
+
+```
+npm run dev
+```
 
 # Установка зависимостей
 ```npm install```
