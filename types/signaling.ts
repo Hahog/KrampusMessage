@@ -10,6 +10,7 @@ export interface StatusMessage {
                             status: boolean
                             idStreamer: String
                         }
+                        offer?: object
                         system_option: object
                     }
 
@@ -36,10 +37,11 @@ export interface startStreamMessage {
                         }
                     }
 
-export interface checkUserActive = {
+export interface checkUserActive {
     type: "checkUserActive",
     idUserTarget: String,
-    idRoom: String
+    idRoom: String,
+    preliminary?: boolean
 }
 
 export interface iceCandidate {

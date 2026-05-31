@@ -7,7 +7,7 @@ import type { User } from '~~/types/other'
 class Auth {
     #dataUser = [
         {
-            unserName: "Jorg",
+            userName: "Jorg",
             name: "JOJO",
             secondName: "HAHAH",
             id: "22",
@@ -15,7 +15,7 @@ class Auth {
             email: "111@vvv.com"
         },
         {
-            unserName: "Sigma",
+            userName: "Sigma",
             name: "Jorg",
             secondName: "Bitch",
             id: "33",

@@ -1,3 +1,5 @@
+import type { User } from "~~/types/other"
+
 export class GroupManagment {
     #activeGroup: number | null = null
     #group = [
@@ -24,11 +26,71 @@ export class GroupManagment {
                     name: "HAHA",
                     id: 124,
                     newMessage: false
-                }
+                },
+                "aaa": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 125,
+                    newMessage: false
+                },
+                "bbb": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 126,
+                    newMessage: false
+                },
+                "ccc": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 127,
+                    newMessage: false
+                },
+                "eee": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 128,
+                    newMessage: false
+                },
+                "ooo": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 129,
+                    newMessage: false
+                },
+                "hhh": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 130,
+                    newMessage: false
+                },
+                "xxx": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 131,
+                    newMessage: false
+                },
+                "jjj": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 132,
+                    newMessage: false
+                },
+                "iii": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 133,
+                    newMessage: false
+                },
+                "lll": {
+                    type: "chat",
+                    name: "HAHA",
+                    id: 134,
+                    newMessage: false
+                },
             }
         },
     ]
-    constructor() {
+    constructor(idRoom: String) {
 
     }
 
@@ -55,6 +117,22 @@ export class GroupManagment {
 
     settingGroup() {
 
+    }
+
+    requreAllUser(): [User] {
+        return [{
+            userName: "Jorg",
+            name: "JOJO",
+            secondName: "HAHAH",
+            id: "22",
+            password: "1234",
+            email: "111@vvv.com",
+            phone: "213213",
+            bio: "",
+            birthday: "321321",
+            country: "gdfgfdg",
+            logo: "/img/test.png"
+        },]
     }
 
     openGroup(idGroup: Number) {

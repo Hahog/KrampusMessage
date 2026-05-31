@@ -1,18 +1,18 @@
 <script setup lang="ts">
-    //import { Auth } from '~/composabels/Auth';
+    import { Auth } from '~/composabels/Auth';
 
     const router = useRouter()
     let emailUser = ref()
     let passwordUser = ref()
     const isThemeDefault = ref(true)
 
-    function auth() {
+    async function auth() {
 
-        //const auth = new Auth()
+        const auth = await new Auth()
 
-        //auth.startAuth({email: emailUser.value, password: passwordUser.value})
+        await auth.startAuth({email: emailUser.value, password: passwordUser.value})
 
-        router.push({path: "/main"})
+        await router.push({path: "/main"})
     }
 
     function restructurTheme() {

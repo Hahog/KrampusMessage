@@ -2,9 +2,9 @@
 import LeftSidersBar from '~/components/leftSidersBar.vue';
 import type { genericRef } from '~~/types/other';
 
-/*definePageMeta({
+definePageMeta({
     middleware: 'auth',
-})*/
+})
 
 const idOpenChat: genericRef<Number> = ref(-1)
 
