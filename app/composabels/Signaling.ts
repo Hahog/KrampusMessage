@@ -5,6 +5,7 @@ export class Signaling {
     #user = useUserStore()
     #idRoom
     #callStore = callStore()
+    #pendingMessages: string[]
     #answerMessage: answerMessage = {
         type: "Answer",
         idUserAnswer: "",
@@ -12,21 +13,6 @@ export class Signaling {
         action: null,
         stream_option: {},
         status: null
-    }
-
-    #statusMessage: StatusMessage = {
-        type: "Status",
-        name: "",
-        idUserTarget: "",
-        statusUser: null,
-        audio: false,
-        video: false,
-        Priority: 0,
-        viewingStream: {
-            status: false,
-            idStreamer: ""
-        },
-        system_option: {}
     }
 
     #startStreamMessage: startStreamMessage = {
@@ -52,6 +38,11 @@ export class Signaling {
     constructor(webSoket: WebSocket, idUser: String, idRoom: String) {
         this.#webSoket = webSoket
         this.#idRoom = idRoom
+        this.#pendingMessages = []
+        this.#webSoket.onopen = () => {
+            this.#pendingMessages.forEach(msg => this.#webSoket?.send(msg))
+            this.#pendingMessages = []
+        }
     }
 
     #reStructurAnswer(idUserAnswer: String, idUserTarget: String, action: String, statusMessage = "Sent", answer: object | "" = "") {
@@ -59,6 +50,7 @@ export class Signaling {
         newAnswer.idUserAnswer = idUserAnswer
         newAnswer.idUserTarget = idUserTarget
         if (statusMessage == "Sent" && answer) {
+            console.log("GenerateAnswerOffer")
             newAnswer.answer = answer
         }
         newAnswer.action = action
@@ -68,11 +60,12 @@ export class Signaling {
         return JSON.stringify(newAnswer)
     }
 
-    #reStructurStatus(statusUser: String, offer: object | "" = "") {
-        const newStatus = JSON.parse(JSON.stringify(this.#statusMessage))
+    #reStructurStatus(statusUser: String, offer: object | "" = "", idUserAnswer: string | "" = "") {
+        const newStatus = JSON.parse(JSON.stringify(this.#callStore.statusUser))
         newStatus.statusUser = statusUser
         newStatus.name = this.#user.userData?.userName
         newStatus.idUserTarget = this.#user.userData?.id
+        newStatus.idRoom = this.#idRoom
 
         /*switch (Role) {
             case "Top":
@@ -84,6 +77,10 @@ export class Signaling {
 
         if (statusUser == "Active" && offer) {
             newStatus.offer = offer
+        }
+
+        if(statusUser == "Active" && idUserAnswer) {
+            newStatus.idUserAnswer = idUserAnswer
         }
 
         return JSON.stringify(newStatus)
@@ -101,36 +98,84 @@ export class Signaling {
         const newStatus = JSON.parse(JSON.stringify(this.#checkUserStatus))
         newStatus.idUserTarget = this.#user.userData?.id
         newStatus.idRoom = this.#idRoom
-        if(preliminary) {
+        if (preliminary) {
             newStatus.preliminary = true
         } else {
             newStatus.preliminary = false
         }
+        console.log(newStatus)
         return JSON.stringify(newStatus)
     }
 
-    sendSignalStartStream() {
-        this.#webSoket.send(this.#reStructureStartStream())
-    }
-
-    sendSignalStatusUser(status: String, offer: object | "" = "") {
-        if(offer != "") {
-            this.#webSoket.send(this.#reStructurStatus(status, offer))
-        } else {
-            this.#webSoket.send(this.#reStructurStatus(status))
+    async createOfferRegenerate(pc, idUser: string) {
+        try {
+            console.log("Regenerate")
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            this.#webSoket.send(this.#reStructurStatus("Active", offer, idUser))
+        } catch (err) {
+            console.error('Ошибка negotiation:', err);
         }
     }
 
-    sendSignalAnswer(idUserAnswer: string, idUserTraget: string, action: string, statusMessage?: string, answer?: object ) {
-        this.#webSoket.send(this.#reStructurAnswer(idUserAnswer, idUserTraget, action, statusMessage, answer))
+    sendSignalStartStream() {
+        if (this.#webSoket && this.#webSoket.readyState === WebSocket.OPEN) {
+            this.#webSoket.send(this.#reStructureStartStream())
+        } else if (this.#webSoket?.readyState === WebSocket.CONNECTING) {
+            this.#pendingMessages.push(this.#reStructureStartStream())
+        } else {
+            console.warn('Невозможно отправить, сокет не открыт')
+        }
+
+    }
+
+    sendSignalStatusUser(status: String, offer: object | "" = "") {
+        if (this.#webSoket && this.#webSoket.readyState === WebSocket.OPEN) {
+            if (offer != "") {
+                this.#webSoket.send(this.#reStructurStatus(status, offer))
+            } else {
+                this.#webSoket.send(this.#reStructurStatus(status))
+            }
+        } else if (this.#webSoket?.readyState === WebSocket.CONNECTING) {
+            if (offer != "") {
+                this.#pendingMessages.push(this.#reStructurStatus(status, offer))
+            } else {
+                this.#pendingMessages.push(this.#reStructurStatus(status))
+            }
+        } else {
+            console.warn('Невозможно отправить, сокет не открыт')
+        }
+
+    }
+
+    sendSignalAnswer(idUserAnswer: string, idUserTraget: string, action: string, statusMessage?: string, answer?: object) {
+        if (this.#webSoket && this.#webSoket.readyState === WebSocket.OPEN) {
+            this.#webSoket.send(this.#reStructurAnswer(idUserAnswer, idUserTraget, action, statusMessage, answer))
+        } else if (this.#webSoket?.readyState === WebSocket.CONNECTING) {
+            this.#pendingMessages.push(this.#reStructurAnswer(idUserAnswer, idUserTraget, action, statusMessage, answer))
+        } else {
+            console.warn('Невозможно отправить, сокет не открыт')
+        }
     }
 
     sendSignalCheckUser(preliminary: boolean) {
-        this.#webSoket.send(this.#reStructurCheckUser(preliminary))
+        if (this.#webSoket && this.#webSoket.readyState === WebSocket.OPEN) {
+            this.#webSoket.send(this.#reStructurCheckUser(preliminary))
+        } else if (this.#webSoket?.readyState === WebSocket.CONNECTING) {
+            this.#pendingMessages.push(this.#reStructurCheckUser(preliminary))
+        } else {
+            console.warn('Невозможно отправить, сокет не открыт')
+        }
     }
 
     sendSignalICECandidate(ice: string) {
-        this.#webSoket.send(ice)
+        if (this.#webSoket && this.#webSoket.readyState === WebSocket.OPEN) {
+            this.#webSoket.send(ice)
+        } else if (this.#webSoket?.readyState === WebSocket.CONNECTING) {
+            this.#pendingMessages.push(ice)
+        } else {
+            console.warn('Невозможно отправить, сокет не открыт')
+        }
     }
 
     getIdRoom(): String {

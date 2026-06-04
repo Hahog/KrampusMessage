@@ -6,17 +6,17 @@ definePageMeta({
     middleware: 'auth',
 })
 
-const idOpenChat: genericRef<Number> = ref(-1)
+const OpenChat: genericRef<object> = ref([])
 
-console.log(idOpenChat.value)
+console.log(OpenChat.value)
 
-provide("idChatOpen", idOpenChat)
+provide("ChatOpen", OpenChat)
 </script>
 
 
 <template>
     <section class="grid grid-cols-4 h-screen box-border">
-        <LeftSidersBar @exitGroup="" @openChat="(id: Number) => {idOpenChat = id}" class="col-span-1 h-screen box-border" />
+        <LeftSidersBar @exitGroup="" @openChat="(chatData: object) => {OpenChat = chatData}" class="col-span-1 h-screen box-border" />
         <MainAreaChat class="col-span-3 col-start-2" />
     </section>
 </template>

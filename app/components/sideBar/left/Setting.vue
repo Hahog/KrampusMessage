@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { genericRef, Setting, User } from "../../../../types/other"
-const userStor: genericRef<User> = ref()
-const settingStore: genericRef<Setting> = ref()
+const userStor: genericRef<User> = ref(useUserStore().userData)
+const settingStore: genericRef<Setting> = ref(useUserStore().settingUser)
 const newDataUser: genericRef<User> = ref({
     id: "0",
     name: "",
@@ -44,10 +44,10 @@ onUpdated(() => {
         <section class="flex flex-col py-4 gap-5 px-7 bg-body-100 rounded-xl">
             <article class="flex flex-row justify-start items-center gap-5">
                 <section class="w-10 h-fit">
-                    <img class="w-10 h-fit" :src="userStor?.logo ? userStor?.logo : ''" alt="logoUser">
+                    <img class="w-10 h-fit rounded-full" :src="userStor?.logo ? userStor?.logo : ''" alt="logoUser">
                 </section>
                 <section class="flex flex-col gap-3">
-                    <h2 class=" text-white text-[20px]">{{ userStor?.name }}</h2>
+                    <h2 class=" text-white text-[20px]">{{ userStor?.userName }}</h2>
                     <p class="text-white text-[16px] text-white/50">{{ userStor?.bio }}</p>
                 </section>
             </article>
@@ -279,7 +279,7 @@ onUpdated(() => {
                                 d="M12 3.7998C14.3195 3.79991 16.2002 5.68047 16.2002 8V10.3125C17.0446 10.4117 17.7002 11.129 17.7002 12V18.5C17.7001 19.4387 16.9387 20.2001 16 20.2002H8C7.06118 20.2002 6.29991 19.4388 6.2998 18.5V12C6.2998 11.1288 6.95521 10.4116 7.7998 10.3125V8C7.7998 5.6804 9.6804 3.7998 12 3.7998ZM8 11.7002C7.83431 11.7002 7.7002 11.8343 7.7002 12V18.5C7.7003 18.6656 7.83438 18.7998 8 18.7998H16C16.1655 18.7997 16.2997 18.6655 16.2998 18.5V12C16.2998 11.8344 16.1656 11.7003 16 11.7002H8ZM12 5.2002C10.4536 5.2002 9.2002 6.4536 9.2002 8V10.2998H14.7998V8C14.7998 6.45367 13.5463 5.2003 12 5.2002Z"
                                 fill="white" />
                         </svg>
-                        <p class="text-[20px] text-white">Account</p>
+                        <p class="text-[20px] text-white">Safety</p>
                     </article>
                     <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                         @click.stop='

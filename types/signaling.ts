@@ -5,6 +5,8 @@ export interface StatusMessage {
                         statusUser: "Active" | "Expectation" | "Close" | null
                         audio: boolean 
                         video: boolean 
+                        muth: boolean
+                        idRoom: string
                         Priority: Number
                         viewingStream: {
                             status: boolean

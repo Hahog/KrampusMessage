@@ -12,6 +12,12 @@ export interface User {
     password: string
 }
 
+export interface CallParticipant extends User {
+    audio: boolean;
+    video: boolean;
+    muth: boolean;  
+}
+
 export interface Setting {
     chatBackup: "on" | "off",
     theme: "light" | "dark"

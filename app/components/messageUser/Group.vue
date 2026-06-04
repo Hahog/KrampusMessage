@@ -7,7 +7,7 @@
     onMounted(() => {
         const userStore = useUserStore()
 
-        isActiveUser.value = userMessage.name == "Name1"
+        isActiveUser.value = userMessage.name == userStore.userData.userName
     })
 </script>
 

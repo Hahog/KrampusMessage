@@ -1,10 +1,28 @@
-import type { User } from "~~/types/other"
+import type { genericRef, User } from "~~/types/other"
+import type { StatusMessage } from "~~/types/signaling"
 
 
 export const callStore = defineStore("Call", () => {
 
     const user = useUserStore()
     const peerConnectionUsers = ref(new Map)
+
+    const statusUser: genericRef<StatusMessage> = ref({
+        type: "Status",
+        name: "",
+        idUserTarget: "",
+        statusUser: null,
+        audio: false,
+        video: false,
+        muth: false,
+        idRoom: "",
+        Priority: 0,
+        viewingStream: {
+            status: false,
+            idStreamer: ""
+        },
+        system_option: {}
+    })
 
     const expectationUserCall = ref([])
 
@@ -71,11 +89,12 @@ export const callStore = defineStore("Call", () => {
             "idUser": data.idUserTarget,
             "PeerConectionMCU": null,
             "stream": null,
-            "isICE": false
+            "isICE": false,
+            "muth": false
         })
 
         console.log(peerConnectionUsers)
     }
 
-    return { peerConnectionUsers, expectationUserCall, activeUserCall, newUserPC, settingCall }
+    return { peerConnectionUsers, expectationUserCall, activeUserCall, newUserPC, settingCall, statusUser }
 })

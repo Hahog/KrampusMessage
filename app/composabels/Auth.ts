@@ -21,7 +21,15 @@ class Auth {
             id: "33",
             password: "1234",
             email: "111@ggg.com"
-        }
+        },
+        {
+            userName: "JOJO",
+            name: "Jorg",
+            secondName: "Bitch",
+            id: "44",
+            password: "1234",
+            email: "111@ccc.com"
+        },
     ]
     #user: unknown
     #noValidateData: UserData = { email: "", password: "" }
@@ -39,7 +47,7 @@ class Auth {
                     id: el.id,
                     email: el.email,
                     name: el.name,
-                    userName: el.unserName,
+                    userName: el.userName,
                     secondName: el.secondName,
                     phone: String(Math.random() * 1000,),
                     birthday: "132213213",
@@ -48,6 +56,7 @@ class Auth {
                     logo: "./img/test.png",
                     password: el.password
                 }
+                console.log(NewUser)
                 this.#userStore.userData = NewUser
             }
         })

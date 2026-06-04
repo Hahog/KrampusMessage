@@ -1,4 +1,4 @@
-export class messageManagment{
+export class messageManagment {
     #messageData = [
         {
             id: 123,
@@ -22,6 +22,84 @@ export class messageManagment{
         })
         */
 
-        
+
+    }
+
+    getUserChatMessage(idUser: string, idParticipant: string) {
+        return [
+            {
+                name: 'name1',
+                data: "Я еиу грушу ghjjj jjjjjjj jjjjjj jjjjjj jjjjjjg gggggggjjjjj jjj jjjjjjjjjjj jjjjjyy yyyyyyyyyyyyyy yyyy cfyyyy yyyyjjjjjj jccccc cccc ccccc cccc ccccccc ccccccc yyyyyy yyy yyyy yyyyy yyyy yyyyy",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'Jorg',
+                data: "Я еиу грушуfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffaaaaadddddddddddddddddddddvvvvvvvvewwwwwwwwvvvvvsddvsdvsddvvvvvvvvvvvvvassssssdvvvvvvvvvvsdvsdvsazdvsdvSdvvvvvvvvvvvsaVvvvvvvvvvvvvsdffffffffffffffffsssvvvvvvvvvvvvvvvvvdsdf",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'Jorg',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'name1',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'Jorg',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+            {
+                name: 'Jorg',
+                data: "Я еиу грушу",
+                srcImg: './img/test.png',
+                time: "10:24"
+            },
+
+        ]
     }
 }

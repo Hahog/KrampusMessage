@@ -8,12 +8,12 @@ export class GroupManagment {
             name: "new",
             users: 233,
             chat: {
-                "One": {
+                "One": [{
                     type: "voice",
                     name: "KAKAKA",
                     id: 123,
                     newMessage: true
-                }
+                }]
             }
         },
         {
@@ -21,72 +21,33 @@ export class GroupManagment {
             name: "Kak",
             users: 456,
             chat: {
-                "chat": {
+                "chat": [{
                     type: "chat",
                     name: "HAHA",
                     id: 124,
                     newMessage: false
                 },
-                "aaa": {
+                {
                     type: "chat",
-                    name: "HAHA",
+                    name: "HOHO",
                     id: 125,
                     newMessage: false
                 },
-                "bbb": {
-                    type: "chat",
-                    name: "HAHA",
+                ],
+                "lll": [
+                    {
+                    type: "voice",
+                    name: "HEHE",
                     id: 126,
                     newMessage: false
                 },
-                "ccc": {
+                {
                     type: "chat",
-                    name: "HAHA",
+                    name: "OHOH",
                     id: 127,
                     newMessage: false
                 },
-                "eee": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 128,
-                    newMessage: false
-                },
-                "ooo": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 129,
-                    newMessage: false
-                },
-                "hhh": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 130,
-                    newMessage: false
-                },
-                "xxx": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 131,
-                    newMessage: false
-                },
-                "jjj": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 132,
-                    newMessage: false
-                },
-                "iii": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 133,
-                    newMessage: false
-                },
-                "lll": {
-                    type: "chat",
-                    name: "HAHA",
-                    id: 134,
-                    newMessage: false
-                },
+                ]
             }
         },
     ]
@@ -103,14 +64,14 @@ export class GroupManagment {
         return true
     }
 
-    createGroup() {
+    createGroup(nameGroup: string) {
 
     }
 
     createChat() {
 
     }
-    
+
     createRole() {
 
     }
@@ -119,20 +80,49 @@ export class GroupManagment {
 
     }
 
-    requreAllUser(): [User] {
-        return [{
-            userName: "Jorg",
-            name: "JOJO",
-            secondName: "HAHAH",
-            id: "22",
-            password: "1234",
-            email: "111@vvv.com",
-            phone: "213213",
-            bio: "",
-            birthday: "321321",
-            country: "gdfgfdg",
-            logo: "/img/test.png"
-        },]
+    requreAllUser(): User[] {
+        return [
+            {
+                bio: "",
+                birthday: "132213213",
+                country: "Russia",
+                email: "111@vvv.com",
+                id: "22",
+                logo: "./img/test.png",
+                name: "JOJO",
+                password: "1234",
+                phone: "333.05280193833164",
+                secondName: "HAHAH",
+                userName: "Jorg"
+            },
+            {
+                bio: "",
+                birthday: "132213213",
+                country: "Russia",
+                email: "111@ggg.com",
+                id: "33",
+                logo: "./img/test.png",
+                name: "JOJO",
+                password: "1234",
+                phone: "333.05280193833164",
+                secondName: "HAHAH",
+                userName: "Sigma"
+            },
+            {
+                bio: "",
+                birthday: "132213213",
+                country: "Russia",
+                email: "111@ccc.com",
+                id: "44",
+                logo: "./img/test.png",
+                name: "JOJO",
+                password: "1234",
+                phone: "333.05280193833164",
+                secondName: "HAHAH",
+                userName: "JOJO"
+            },
+            
+        ]
     }
 
     openGroup(idGroup: Number) {
@@ -143,7 +133,7 @@ export class GroupManagment {
         */
         let group = null
         this.#group.forEach((el) => {
-            if(el.id == idGroup) {
+            if (el.id == idGroup) {
                 console.log(el)
                 group = el
             }
@@ -251,6 +241,22 @@ export class GroupManagment {
             },
 
         ]
+    }
+
+    deleteUserInGroup(idGroup: string, idUser: string) {
+
+    }
+
+    requreAllRole(idGroup: string) {
+
+    }
+
+    deleteRoleInGroup(idGroup: string, idRole: string) {
+
+    }
+
+    addNewUser(idGroup: string, userEmail: string) {
+
     }
 }
 

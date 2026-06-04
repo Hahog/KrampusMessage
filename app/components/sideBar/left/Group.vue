@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { GroupManagment } from '~/composabels/groupManagment';
 import { WebRTC } from '~/composabels/WebRTC';
-import type { genericRef, User } from '~~/types/other';
+import type { CallParticipant, genericRef, User } from '~~/types/other';
 
 
 
@@ -10,13 +10,17 @@ const WebSocketCall = ref([])
 const groupName = ref()
 const activeCreateDialog: genericRef<boolean> = ref(false)
 const activeCreateChatDialog: genericRef<boolean> = ref(false)
-const activeUserInWebRTCCall: genericRef<[{ id: String, users: [User] }?]> = ref([])
+const activeUserInWebRTCCall: genericRef<[{ id: String, users: [CallParticipant] }?]> = ref([])
+const activeRoleSetting = ref()
+const addUserEmail = ref()
+const activeModelCreateRole = ref()
 
 onMounted(async () => {
     groupClass = new GroupManagment()
 
     groupName.value = await groupClass.requestGroup()
     console.log(groupName.value)
+
 })
 
 /*watch(groupName, async (oldValue, newValue) => {
@@ -28,31 +32,41 @@ onMounted(async () => {
 
 const activeGroup = ref();
 
-function optionGroup() { }
+const optionGroup = ref()
 
 function checkUserCall(group: object) {
-    console.log(Object.values(group.chat))
-    Object.values(group.chat).forEach((el) => {
-        if ("id" in el && el.type == "voice") {
-            WebSocketCall.value.push(new WebRTC(el.id, "preliminary"))
-        }
 
+    (Object.values(group.chat)).forEach((el) => {
+        el.forEach(async (room) => {
+            if ("id" in room && room.type == "voice") {
+                console.log(room)
+                await WebSocketCall.value.push(markRaw(new WebRTC(room.id, "preliminary")))
+            }
+        });
     })
 
-    console.log(WebSocketCall)
+    console.log(WebSocketCall.value)
 
     const userGroup = groupClass.requreAllUser()
+    console.log(userGroup)
     const user = useUserStore()
+    console.log('WebSocketCall.value length:', WebSocketCall.value.length)
+    console.log('WebSocketCall.value:', WebSocketCall.value)
 
-    WebSocketCall.value.forEach((el: WebRTC) => {
+    WebSocketCall.value.forEach((el: WebRTC, id) => {
+        console.log(id)
         const idRoom = el.getIdRoom()
+        console.log(el.getWebSoketObject())
         el.getWebSoketObject().onmessage = (event) => {
+
             const data = JSON.parse(event.data)
-            if (data.type == 'Answer' && data.action == 'checkUserActive' && data.idUserAnswer == user.userData.id) {
+            console.log(data)
+            if (data.type == 'Answer' && data.preliminary && data.action == 'checkUserActive' && data.idUserAnswer == user.userData.id) {
+                console.log(data)
                 userGroup.forEach((user) => {
                     if (user.id == data.idUserTarget && activeUserInWebRTCCall.value != undefined) {
 
-                        if ((activeUserInWebRTCCall.value.filter((active) => { active?.id == idRoom })).length) {
+                        if ((activeUserInWebRTCCall.value.filter((active) => active?.id == idRoom)).length) {
                             activeUserInWebRTCCall.value.forEach((userRoom) => {
                                 if (userRoom?.id == el.getIdRoom()) {
                                     userRoom.users.push(user)
@@ -61,25 +75,114 @@ function checkUserCall(group: object) {
                         } else {
                             activeUserInWebRTCCall.value.push({
                                 id: idRoom,
-                                users: [user]
+                                users: [
+                                    {
+                                        ...user,
+                                        audio: true,
+                                        video: false,
+                                        muth: false
+                                    } as CallParticipant
+                                ]
                             })
                         }
 
                     }
                 })
+            } else if (data.type == "Status") {
+                if (data.statusUser == "Active") {
+                    console.log(data)
+                    if (activeUserInWebRTCCall.value?.filter((userRoom) => userRoom.id == data.idRoom).length) {
+                        activeUserInWebRTCCall.value?.forEach(userRoom => {
+                            if (userRoom.id == data.idRoom) {
+                                const indexUser = userRoom?.users.findIndex(user => user.id === data.idUserTarget)
+
+                                if (indexUser !== -1 && indexUser != undefined) {
+                                    userRoom.users[indexUser] = {
+                                        ...userRoom.users[indexUser],
+                                        audio: data.audio,
+                                        video: data.video,
+                                        muth: data.muth
+                                    } as CallParticipant
+
+                                    return
+                                } else if (indexUser != undefined) {
+                                    const user = userGroup.filter(user => user.id == data.idUserTarget)[0]
+                                    userRoom?.users.push(
+                                        {
+                                            ...user,
+                                            audio: data.audio,
+                                            video: data.video,
+                                            muth: data.muth
+                                        } as CallParticipant)
+                                }
+                            }
+                        })
+                    } else {
+                        const user = userGroup.filter(user => user.id == data.idUserTarget)[0]
+                        activeUserInWebRTCCall.value.push({
+                            id: idRoom,
+                            users: [
+                                {
+                                    ...user,
+                                    audio: true,
+                                    video: false,
+                                    muth: false
+                                } as CallParticipant
+                            ]
+                        })
+                    }
+
+                } else if (data.statusUser == "Close") {
+                    activeUserInWebRTCCall.value?.forEach((userRoom, id) => {
+                        if (userRoom?.id == data.idRoom) {
+                            const userIndex = userRoom?.users.findIndex(user => user.id == data.idUserTarget)
+
+                            if (userIndex !== -1 && userIndex != undefined) {
+                                userRoom?.users.splice(userIndex, 1)
+                            } else {
+                                console.log("Тут что-то не так :(")
+                            }
+
+                            if (!userRoom?.users.length && userIndex != undefined) {
+                                console.log("ООО даааа")
+                                activeUserInWebRTCCall.value?.splice(userIndex, 1)
+                            }
+                        }
+                    })
+                }
             }
         }
         el.sendSignalCheckUser(true)
     })
     console.log(WebSocketCall.value)
+    console.log(activeUserInWebRTCCall.value)
 }
+
+watch(activeUserInWebRTCCall, () => {
+    console.log(activeUserInWebRTCCall.value)
+}, { deep: true })
+
 
 function openOptionChat() {
 
 }
 
+
+watch(activeGroup, async () => {
+    for (let el of WebSocketCall.value) {
+        console.log(el)
+        const element = (el as WebRTC)
+        await element.getWebSoketObject().close()
+    }
+    console.log(WebSocketCall.value)
+    activeUserInWebRTCCall.value = []
+    WebSocketCall.value = []
+    console.log(activeGroup.value)
+    checkUserCall(activeGroup.value)
+}, { immediate: false, deep: false })
+
 function returnArrayUserCall(id) {
-    let data = JSON.parse(JSON.stringify(activeUserInWebRTCCall.value?.filter((userRoom) => {userRoom?.id == id})))
+    let data = JSON.parse(JSON.stringify(activeUserInWebRTCCall.value?.filter((userRoom) => userRoom?.id == id)))
     data = data[0]
     return data.users
 }
@@ -87,14 +190,14 @@ function returnArrayUserCall(id) {
 </script>
 
 <template>
-    <ModalCreateGroup @createGroup="" @dropDialog="activeCreateDialog = false" v-if="activeCreateDialog" />
+    <ModalCreateGroup @createGroup="(nameGroup: string) => groupClass.createGroup(nameGroup)" @dropDialog="activeCreateDialog = false" v-if="activeCreateDialog" />
     <ModalCreateChat @dropDialog="activeCreateChatDialog = false" v-if="activeCreateChatDialog"></ModalCreateChat>
+    <ModalCreateRole @createRole="(nameRole: string, settingRole: object) => {}" v-if="activeModelCreateRole" @dropDialog="activeModelCreateRole = false"/>
     <article :class="{
         grid: activeGroup,
         'h-screen': true,
         'grid-cols-5': activeGroup
     }">
-
         <section :class="{
             'flex': true,
             'flex-col': true,
@@ -124,7 +227,6 @@ function returnArrayUserCall(id) {
                 }" v-for="el in groupName" :key="el.id" @click.stop="
                     () => {
                         activeGroup = groupClass.openGroup(el.id);
-                        checkUserCall(activeGroup)
                         console.log(activeGroup)
                     }
                 ">
@@ -163,18 +265,79 @@ function returnArrayUserCall(id) {
             'flex': true,
             'flex-col': true,
             'col-start-2': true,
+            'relative': true,
             'col-span-4': true,
             'h-screen': true,
             'animate-group': activeGroup,
         }">
+            <article v-if="optionGroup" class="bg-body-500 z-10 absolute top-0 left-0 w-full h-screen">
+                <section class="flex justify-end p-2">
+                    <svg @click.stop="optionGroup = false" viewBox="0 0 32 32" class="w-8 fill-white"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M4,29a1,1,0,0,1-.71-.29,1,1,0,0,1,0-1.42l24-24a1,1,0,1,1,1.42,1.42l-24,24A1,1,0,0,1,4,29Z" />
+                        <path
+                            d="M28,29a1,1,0,0,1-.71-.29l-24-24A1,1,0,0,1,4.71,3.29l24,24a1,1,0,0,1,0,1.42A1,1,0,0,1,28,29Z" />
+                    </svg>
+                </section>
+                <section
+                    class="flex flex-col h-screen pb-50 gap-6 px-1 overflow-y-auto scrollbar-hide scroll-smooth w-full">
+                    <article>
+                        <p class=" pl-1 text-[20px] text-white font-bold">Name group:</p>
+                        <input
+                            class="w-full border-b-3 border-white focus:outline-none placeholder:text-[20px] placeholder:text-white text-white text-[20px] py-2 pl-1"
+                            :placeholder="activeGroup.name">
+                    </article>
+                    <article>
+                        <p class=" pl-1 text-[20px] text-white font-bold">Description group:</p>
+                        <textarea
+                            class="box-border scrollbar-hide scroll-smooth resize-none  overflow-y-auto w-full border-b-3 border-white focus:outline-none placeholder:text-[20px] placeholder:text-white text-white text-[20px] py-2 pl-1"
+                            :placeholder="activeGroup.description"></textarea>
+                    </article>
+                    <article>
+                        <p class=" pl-1 text-[20px] text-white font-bold">Users group:</p>
+                        <section
+                            class="w-full h-50 border-b-3 pt-2 border-white scrollbar-hide scroll-smooth resize-none  overflow-y-auto">
+                            <OtherSideBarGroupSettingUser
+                                @deleteUserGroup="(id: string) => groupClass.deleteUserInGroup(activeGroup.id, id)"
+                                v-for="el in groupClass.requreAllUser()" :key="el.id" :user-group="el" />
+                        </section>
+                    </article>
+                    <article>
+                        <p class="pl-1 text-[20px] text-white font-bold">Role group: </p>
+                        <section class="w-full h-50  pt-2  scrollbar-hide scroll-smooth resize-none  overflow-y-auto">
+                            <OtherSideBarGroupSettingRole
+                                @settingRole="(roleData: object) => { activeRoleSetting = roleData }"
+                                @deleteRoleGroup="(id: string) => groupClass.deleteRoleInGroup(activeGroup.id, id)"
+                                v-for="el in groupClass.requreAllRole(activeGroup.id)" :key="el.id" />
+                        </section>
+                        <section class="w-full flex border-b-3 border-white justify-center items-center p-2">
+                            <button @click.stop="activeModelCreateRole = true"
+                                class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-3/4 ">Создать
+                                роль!</button>
+                        </section>
+                    </article>
+                    <article>
+                        <p class="pl-1 pb-5 text-[20px] text-white font-bold">Add user: </p>
+                        <input v-model="addUserEmail"
+                            class="w-full pb-4 focus:outline-none placeholder:text-[20px] placeholder:text-white text-white text-[20px] py-2 pl-1"
+                            placeholder="emailUser">
+                        <section class="w-full flex justify-center p-2 border-b-3 border-white">
+                            <button @click.stop="groupClass.addNewUser(activeGroup.id, addUserEmail)"
+                                class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-3/4 ">Add
+                                user</button>
+                        </section>
+                    </article>
+                </section>
+            </article>
             <article class="flex flex-col gap-5">
                 <article class="flex flex-row justify-between px-4 py-2 border-b-4 border-body-100">
                     <section class="flex flex-col gap-1 text-start">
                         <h2 class="text-[26px] text-white/80">{{ activeGroup.name }}</h2>
-                        <p class="text-[16px] text-white">{{ activeGroup.user }} members</p>
+                        <p class="text-[16px] text-white">{{ activeGroup.users }} members</p>
                     </section>
                     <section class="flex flex-row gap-10 justify-center items-center">
-                        <svg @click="optionGroup()" width="7" height="34" viewBox="0 0 7 34" fill="none"
+                        <svg @click="optionGroup = true" width="7" height="34" viewBox="0 0 7 34" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M0 3.33333C0 4.21739 0.35119 5.06523 0.976311 5.69036C1.60143 6.31548 2.44928 6.66667 3.33333 6.66667C4.21739 6.66667 5.06523 6.31548 5.69036 5.69036C6.31548 5.06523 6.66667 4.21739 6.66667 3.33333C6.66667 2.44928 6.31548 1.60143 5.69036 0.976311C5.06523 0.351189 4.21739 0 3.33333 0C2.44928 0 1.60143 0.351189 0.976311 0.976311C0.35119 1.60143 0 2.44928 0 3.33333ZM3.33333 20C2.44928 20 1.60143 19.6488 0.976311 19.0237C0.35119 18.3986 0 17.5507 0 16.6667C0 15.7826 0.35119 14.9348 0.976311 14.3096C1.60143 13.6845 2.44928 13.3333 3.33333 13.3333C4.21739 13.3333 5.06523 13.6845 5.69036 14.3096C6.31548 14.9348 6.66667 15.7826 6.66667 16.6667C6.66667 17.5507 6.31548 18.3986 5.69036 19.0237C5.06523 19.6488 4.21739 20 3.33333 20ZM3.33333 33.3333C2.44928 33.3333 1.60143 32.9821 0.976311 32.357C0.35119 31.7319 0 30.8841 0 30C0 29.1159 0.35119 28.2681 0.976311 27.643C1.60143 27.0179 2.44928 26.6667 3.33333 26.6667C4.21739 26.6667 5.06523 27.0179 5.69036 27.643C6.31548 28.2681 6.66667 29.1159 6.66667 30C6.66667 30.8841 6.31548 31.7319 5.69036 32.357C5.06523 32.9821 4.21739 33.3333 3.33333 33.3333Z"
@@ -219,37 +382,60 @@ function returnArrayUserCall(id) {
                                 </section>
                             </article>
                             <article class="flex flex-col gap-2 hidden">
-                                <article class="flex flex-row hover:bg-white/10 p-2 justify-between pl-5 items-center"
-                                    @click='$emit("openChat", [activeGroup.chat[chat].type, activeGroup.chat[chat]])'
-                                    v-for="chat in Object.keys(activeGroup.chat)" :key="activeGroup.chat[el].id">
-                                    <section class="flex flex-row gap-5 justify-start items-center">
-                                        <svg v-if="activeGroup.chat[chat].type == 'chat'" width="30" height="26"
-                                            viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M7.51444 2.13923C5.24165 3.56915 3.52251 5.66358 2.61795 8.10463C1.71338 10.5457 1.67276 13.2001 2.50226 15.6651C2.73218 16.385 2.70919 17.1485 2.27234 17.7594L0.364038 20.6391C0.141344 20.9684 0.0161075 21.3485 0.00145149 21.7396C-0.0132045 22.1307 0.0832618 22.5183 0.280739 22.8618C0.478216 23.2053 0.769432 23.4921 1.12388 23.6922C1.47832 23.8922 1.88294 23.9981 2.29534 23.9987H14.9407C18.3478 24.0454 21.6353 22.8088 24.0832 20.5597C26.531 18.3106 27.9395 15.2326 28 12C27.9395 8.7674 26.531 5.68935 24.0832 3.4403C21.6353 1.19124 18.3478 -0.0454209 14.9407 0.00127599C12.1817 0.00127599 9.60668 0.786646 7.51444 2.13923Z"
-                                                fill="white" />
-                                        </svg>
-                                        <svg v-else width="30" height="26" viewBox="0 0 30 26" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M15 3.25035C15 2.96303 14.8683 2.68748 14.6339 2.48432C14.3995 2.28115 14.0815 2.16702 13.75 2.16702H13.675C13.5015 2.166 13.3297 2.1963 13.1704 2.25598C13.0112 2.31566 12.868 2.40343 12.75 2.51368L7.4 7.58368H3.75C3.41848 7.58368 3.10054 7.69782 2.86612 7.90098C2.6317 8.10415 2.5 8.3797 2.5 8.66702V17.3337C2.5 17.621 2.6317 17.8966 2.86612 18.0997C3.10054 18.3029 3.41848 18.417 3.75 18.417H7.4L12.75 23.487C12.868 23.5973 13.0112 23.685 13.1704 23.7447C13.3297 23.8044 13.5015 23.8347 13.675 23.8337H13.75C14.0815 23.8337 14.3995 23.7195 14.6339 23.5164C14.8683 23.3132 15 23.0377 15 22.7503V3.25035ZM18.875 22.4795C18.15 22.6312 17.5 22.122 17.5 21.4828V21.4503C17.5 20.9087 17.9625 20.4537 18.5625 20.3128C20.4108 19.8729 22.0413 18.919 23.2034 17.5979C24.3655 16.2768 24.9949 14.6616 24.9949 13.0003C24.9949 11.3391 24.3655 9.72387 23.2034 8.40277C22.0413 7.08168 20.4108 6.12785 18.5625 5.68785C18.2657 5.62597 18.0007 5.48096 17.8086 5.27531C17.6165 5.06966 17.508 4.81485 17.5 4.55035V4.51785C17.5 3.86785 18.15 3.36952 18.875 3.52118C21.3306 4.03354 23.5158 5.24713 25.0788 6.9666C26.6419 8.68607 27.4918 10.8114 27.4918 13.0003C27.4918 15.1893 26.6419 17.3146 25.0788 19.0341C23.5158 20.7536 21.3306 21.9672 18.875 22.4795Z"
-                                                fill="white" />
-                                            <path
-                                                d="M18.95 17.8862C18.2375 18.1895 17.5 17.6695 17.5 16.987V16.8353C17.5 16.3695 17.85 15.9687 18.2875 15.7303C18.8138 15.4357 19.2465 15.0315 19.5462 14.5546C19.8458 14.0777 20.0028 13.5433 20.0028 13.0003C20.0028 12.4573 19.8458 11.923 19.5462 11.4461C19.2465 10.9692 18.8138 10.565 18.2875 10.2703C17.85 10.0212 17.5 9.62032 17.5 9.16532V9.01365C17.5 8.33115 18.2375 7.82199 18.95 8.11449C20.0135 8.55564 20.9113 9.24848 21.5397 10.113C22.1682 10.9776 22.5016 11.9785 22.5016 13.0003C22.5016 14.0221 22.1682 15.0231 21.5397 15.8876C20.9113 16.7522 20.0135 17.445 18.95 17.8862Z"
-                                                fill="white" />
-                                        </svg>
-                                        <p>{{ activeGroup.chat[chat].name }}</p>
-                                        <article
-                                            v-if="activeUserInWebRTCCall.length > 1 && activeGroup.chat[chat].type == 'voice'">
-                                            <section v-for="user in returnArrayUserCall(activeGroup.chat[chat].id)"
-                                                class="flex flex-row gap-5 pl-2">
-                                                <img class="w-10 h-10 rounded-full" :src="user.logo" alt="">
-                                                <p class="text-[15px] text-white font-bold">{{ user.userName }}</p>
-                                            </section>
+                                <article
+                                    class="flex flex-col gap-2 hover:bg-white/10 p-2 justify-between pl-5 items-start"
+                                    @click='$emit("openChat", [chat.type, chat])' v-for="chat in activeGroup.chat[el]"
+                                    :key="chat.id">
+                                    <section class="flex flex-row gap-5 justify-between items-center">
+                                        <article class="flex flex-row gap-5 justify-start items-center">
+                                            <svg v-if="chat.type == 'chat'" width="30" height="26" viewBox="0 0 28 24"
+                                                fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M7.51444 2.13923C5.24165 3.56915 3.52251 5.66358 2.61795 8.10463C1.71338 10.5457 1.67276 13.2001 2.50226 15.6651C2.73218 16.385 2.70919 17.1485 2.27234 17.7594L0.364038 20.6391C0.141344 20.9684 0.0161075 21.3485 0.00145149 21.7396C-0.0132045 22.1307 0.0832618 22.5183 0.280739 22.8618C0.478216 23.2053 0.769432 23.4921 1.12388 23.6922C1.47832 23.8922 1.88294 23.9981 2.29534 23.9987H14.9407C18.3478 24.0454 21.6353 22.8088 24.0832 20.5597C26.531 18.3106 27.9395 15.2326 28 12C27.9395 8.7674 26.531 5.68935 24.0832 3.4403C21.6353 1.19124 18.3478 -0.0454209 14.9407 0.00127599C12.1817 0.00127599 9.60668 0.786646 7.51444 2.13923Z"
+                                                    fill="white" />
+                                            </svg>
+                                            <svg v-else width="30" height="26" viewBox="0 0 30 26" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M15 3.25035C15 2.96303 14.8683 2.68748 14.6339 2.48432C14.3995 2.28115 14.0815 2.16702 13.75 2.16702H13.675C13.5015 2.166 13.3297 2.1963 13.1704 2.25598C13.0112 2.31566 12.868 2.40343 12.75 2.51368L7.4 7.58368H3.75C3.41848 7.58368 3.10054 7.69782 2.86612 7.90098C2.6317 8.10415 2.5 8.3797 2.5 8.66702V17.3337C2.5 17.621 2.6317 17.8966 2.86612 18.0997C3.10054 18.3029 3.41848 18.417 3.75 18.417H7.4L12.75 23.487C12.868 23.5973 13.0112 23.685 13.1704 23.7447C13.3297 23.8044 13.5015 23.8347 13.675 23.8337H13.75C14.0815 23.8337 14.3995 23.7195 14.6339 23.5164C14.8683 23.3132 15 23.0377 15 22.7503V3.25035ZM18.875 22.4795C18.15 22.6312 17.5 22.122 17.5 21.4828V21.4503C17.5 20.9087 17.9625 20.4537 18.5625 20.3128C20.4108 19.8729 22.0413 18.919 23.2034 17.5979C24.3655 16.2768 24.9949 14.6616 24.9949 13.0003C24.9949 11.3391 24.3655 9.72387 23.2034 8.40277C22.0413 7.08168 20.4108 6.12785 18.5625 5.68785C18.2657 5.62597 18.0007 5.48096 17.8086 5.27531C17.6165 5.06966 17.508 4.81485 17.5 4.55035V4.51785C17.5 3.86785 18.15 3.36952 18.875 3.52118C21.3306 4.03354 23.5158 5.24713 25.0788 6.9666C26.6419 8.68607 27.4918 10.8114 27.4918 13.0003C27.4918 15.1893 26.6419 17.3146 25.0788 19.0341C23.5158 20.7536 21.3306 21.9672 18.875 22.4795Z"
+                                                    fill="white" />
+                                                <path
+                                                    d="M18.95 17.8862C18.2375 18.1895 17.5 17.6695 17.5 16.987V16.8353C17.5 16.3695 17.85 15.9687 18.2875 15.7303C18.8138 15.4357 19.2465 15.0315 19.5462 14.5546C19.8458 14.0777 20.0028 13.5433 20.0028 13.0003C20.0028 12.4573 19.8458 11.923 19.5462 11.4461C19.2465 10.9692 18.8138 10.565 18.2875 10.2703C17.85 10.0212 17.5 9.62032 17.5 9.16532V9.01365C17.5 8.33115 18.2375 7.82199 18.95 8.11449C20.0135 8.55564 20.9113 9.24848 21.5397 10.113C22.1682 10.9776 22.5016 11.9785 22.5016 13.0003C22.5016 14.0221 22.1682 15.0231 21.5397 15.8876C20.9113 16.7522 20.0135 17.445 18.95 17.8862Z"
+                                                    fill="white" />
+                                            </svg>
+                                            <p>{{ chat.name }}</p>
                                         </article>
+                                        <div class="p-2 bg-white rounded-full" v-if="chat.newMessage">
+                                        </div>
                                     </section>
-                                    <div class="p-2 bg-white rounded-full" v-if="activeGroup.chat[chat].newMessage">
-                                    </div>
+                                    <article class="flex flex-col gap-5"
+                                        v-if="activeUserInWebRTCCall.length && chat.type == 'voice'">
+                                        <section v-for="user in returnArrayUserCall(chat.id)"
+                                            class="flex flex-row items-center gap-5 pl-5" :key="user.id">
+                                            <img class="w-7 h-7 rounded-full" :src="user.logo" alt="">
+                                            <p class="text-[15px] text-white font-bold">{{ user.userName }}</p>
+                                            <article class="flex flex-row gap-5 items-center"
+                                                v-if="!user.audio || user.muth || !user.video">
+                                                <svg v-if="!user.audio" width="20" height="20" viewBox="0 0 40 40"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M4.5 37.8335L37.8333 4.50016C38.0741 4.17921 38.1909 3.7822 38.1625 3.38202C38.134 2.98183 37.9622 2.60534 37.6785 2.32165C37.3948 2.03797 37.0183 1.86613 36.6181 1.83769C36.218 1.80925 35.821 1.92612 35.5 2.16683L2.16667 35.5002C1.97564 35.6434 1.81762 35.8261 1.70333 36.0357C1.58903 36.2454 1.52112 36.4772 1.50419 36.7154C1.48727 36.9535 1.52172 37.1926 1.60522 37.4163C1.68871 37.64 1.81931 37.8432 1.98816 38.012C2.157 38.1809 2.36016 38.3115 2.58387 38.395C2.80759 38.4784 3.04663 38.5129 3.28482 38.496C3.523 38.479 3.75477 38.4111 3.96442 38.2968C4.17408 38.1825 4.35673 38.0245 4.5 37.8335ZM18 28.8668C17.65 29.2168 17.8333 29.8335 18.3333 29.9002V33.3335H15C14.558 33.3335 14.134 33.5091 13.8215 33.8217C13.5089 34.1342 13.3333 34.5581 13.3333 35.0002C13.3333 35.4422 13.5089 35.8661 13.8215 36.1787C14.134 36.4912 14.558 36.6668 15 36.6668H25C25.442 36.6668 25.8659 36.4912 26.1785 36.1787C26.4911 35.8661 26.6667 35.4422 26.6667 35.0002C26.6667 34.5581 26.4911 34.1342 26.1785 33.8217C25.8659 33.5091 25.442 33.3335 25 33.3335H21.6667V29.9002C24.8895 29.4941 27.8533 27.9255 30.0015 25.4889C32.1497 23.0522 33.3344 19.9152 33.3333 16.6668C33.3333 16.2248 33.1577 15.8009 32.8452 15.4883C32.5326 15.1758 32.1087 15.0002 31.6667 15.0002C31.2246 15.0002 30.8007 15.1758 30.4882 15.4883C30.1756 15.8009 30 16.2248 30 16.6668C30 19.0835 29.1333 21.3168 27.7 23.0502L27.6667 23.0835C26.7881 24.1394 25.7012 25.0026 24.4737 25.6192C23.2463 26.2358 21.9049 26.5924 20.5333 26.6668C20.3201 26.6775 20.1183 26.7665 19.9667 26.9168L18 28.8835V28.8668ZM25.6 7.5335C25.85 7.2835 25.9167 6.90017 25.7333 6.60016C24.988 5.34406 23.8508 4.36748 22.4965 3.82053C21.1422 3.27359 19.6457 3.18654 18.2371 3.57276C16.8285 3.95899 15.5857 4.79712 14.6998 5.95834C13.8138 7.11955 13.3338 8.53958 13.3333 10.0002V16.6668C13.3333 17.1668 13.3833 17.6335 13.5 18.1002C13.6167 18.6668 14.3167 18.8168 14.7333 18.4002L25.6 7.5335ZM8.43333 23.3002C8.7 23.7668 9.31667 23.8168 9.68333 23.4502L10.9333 22.2002C11.2 21.9335 11.25 21.5335 11.0667 21.1835C10.3601 19.7831 9.99456 18.2354 10 16.6668C10 16.2248 9.8244 15.8009 9.51184 15.4883C9.19928 15.1758 8.77536 15.0002 8.33333 15.0002C7.89131 15.0002 7.46738 15.1758 7.15482 15.4883C6.84226 15.8009 6.66667 16.2248 6.66667 16.6668C6.66667 19.0835 7.31667 21.3502 8.43333 23.3002Z"
+                                                        fill="#F23F42" />
+                                                </svg>
+                                                <svg v-if="user.muth" width="20" height="20" viewBox="0 0 40 40"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M37.8333 4.50003C38.0741 4.17907 38.1909 3.78206 38.1625 3.38188C38.134 2.9817 37.9622 2.6052 37.6785 2.32152C37.3948 2.03783 37.0183 1.86599 36.6181 1.83755C36.218 1.80911 35.821 1.92598 35.5 2.16669L2.16667 35.5C1.97564 35.6433 1.81762 35.8259 1.70333 36.0356C1.58903 36.2453 1.52112 36.477 1.50419 36.7152C1.48727 36.9534 1.52172 37.1924 1.60522 37.4162C1.68871 37.6399 1.81931 37.843 1.98816 38.0119C2.157 38.1807 2.36016 38.3113 2.58387 38.3948C2.80759 38.4783 3.04663 38.5128 3.28482 38.4958C3.523 38.4789 3.75477 38.411 3.96442 38.2967C4.17408 38.1824 4.35673 38.0244 4.5 37.8334L37.8333 4.50003ZM28.4333 4.90003C28.5243 4.81211 28.5932 4.70387 28.6342 4.58419C28.6753 4.4645 28.6873 4.33679 28.6694 4.21153C28.6516 4.08628 28.6042 3.96705 28.5313 3.86365C28.4584 3.76025 28.362 3.67561 28.25 3.61669C24.8058 1.88407 20.903 1.28138 17.0965 1.89431C13.2901 2.50725 9.77374 4.30462 7.0475 7.03086C4.32126 9.7571 2.52389 13.2734 1.91095 17.0799C1.29801 20.8863 1.90071 24.7891 3.63333 28.2334C3.86667 28.7334 4.51667 28.8167 4.9 28.4334L10.2333 23.1C10.65 22.6834 10.4833 21.9667 9.9 21.8334C9.34054 21.7197 8.77088 21.6639 8.2 21.6667H5.08333C4.78795 19.0327 5.19577 16.3675 6.26527 13.9424C7.33476 11.5173 9.02775 9.41881 11.1719 7.86068C13.316 6.30254 15.8347 5.34036 18.4716 5.07207C21.1085 4.80379 23.7693 5.23899 26.1833 6.33336C26.5167 6.48336 26.9167 6.41669 27.1667 6.16669L28.4333 4.90003ZM33.6667 13.8C33.5935 13.6409 33.5703 13.4634 33.6001 13.2908C33.6298 13.1183 33.7112 12.9588 33.8333 12.8334L35.1 11.5667C35.1879 11.4757 35.2962 11.4068 35.4158 11.3658C35.5355 11.3248 35.6632 11.3127 35.7885 11.3306C35.9137 11.3485 36.033 11.3958 36.1364 11.4687C36.2398 11.5417 36.3244 11.6381 36.3833 11.75C38.5134 15.9824 38.9222 20.875 37.524 25.4022C36.1258 29.9293 33.0291 33.7393 28.8833 36.0334C26.7667 37.2167 24.3333 36.4167 22.9667 34.8C22.2306 33.9285 21.8036 32.8379 21.7523 31.6983C21.7011 30.5586 22.0284 29.4341 22.6833 28.5L24.9833 25.2167C25.7528 24.119 26.7758 23.2231 27.9654 22.6051C29.155 21.9871 30.4761 21.6652 31.8167 21.6667H34.9167C35.2083 18.9799 34.7768 16.264 33.6667 13.8ZM16.8333 29.8334C17.25 29.4167 17.9167 29.5334 18.0667 30.0667C18.2944 30.88 18.3193 31.7368 18.1392 32.562C17.959 33.3872 17.5793 34.1556 17.0333 34.8C16.3436 35.6604 15.376 36.2541 14.2965 36.4791C13.2169 36.7041 12.0927 36.5465 11.1167 36.0334C11.0809 36.0138 11.0501 35.9864 11.0266 35.9531C11.0031 35.9198 10.9875 35.8816 10.9811 35.8414C10.9746 35.8012 10.9775 35.76 10.9894 35.721C11.0014 35.6821 11.0221 35.6464 11.05 35.6167L16.85 29.8167L16.8333 29.8334Z"
+                                                        fill="#F23F42" />
+                                                </svg>
+                                                <svg v-if="!user.video" width="20" height="20" viewBox="0 0 40 40"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path class="fill-red-500"
+                                                        d="M6.66699 6.66675C5.34091 6.66675 4.06914 7.19353 3.13146 8.13121C2.19378 9.0689 1.66699 10.3407 1.66699 11.6667V28.3334C1.66699 29.6595 2.19378 30.9313 3.13146 31.8689C4.06914 32.8066 5.34091 33.3334 6.66699 33.3334H25.0003C26.3264 33.3334 27.5982 32.8066 28.5359 31.8689C29.4735 30.9313 30.0003 29.6595 30.0003 28.3334V24.8001C29.9982 25.1107 30.0828 25.4157 30.2448 25.6808C30.4068 25.9458 30.6396 26.1603 30.917 26.3001L35.917 28.8001C36.172 28.9286 36.4557 28.9894 36.7409 28.9767C37.0262 28.9641 37.3034 28.8784 37.546 28.7278C37.7886 28.5772 37.9884 28.3668 38.1263 28.1168C38.2643 27.8668 38.3357 27.5856 38.3337 27.3001V12.7001C38.3357 12.4146 38.2643 12.1333 38.1263 11.8833C37.9884 11.6333 37.7886 11.4229 37.546 11.2724C37.3034 11.1218 37.0262 11.0361 36.7409 11.0234C36.4557 11.0108 36.172 11.0716 35.917 11.2001L30.917 13.7001C30.6396 13.8399 30.4068 14.0544 30.2448 14.3194C30.0828 14.5844 29.9982 14.8895 30.0003 15.2001V11.6667C30.0003 10.3407 29.4735 9.0689 28.5359 8.13121C27.5982 7.19353 26.3264 6.66675 25.0003 6.66675H6.66699Z" />
+                                                </svg>
+                                            </article>
+                                        </section>
+                                    </article>
                                 </article>
                             </article>
                         </section>

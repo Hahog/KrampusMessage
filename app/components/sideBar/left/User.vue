@@ -1,131 +1,26 @@
 <script setup lang="ts">
-const userAll = ref([
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: true
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: false,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-    {
-        src: "/img/test.png",
-        name: "New",
-        id: 11,
-        newMessage: true,
-        isFavouritesUser: false
-    },
-])
+import { User } from '~/composabels/User'
+
+
+const allUser = ref()
+const userClass = new User
+onMounted(async () => {
+    allUser.value = await userClass.getAllUser()
+    console.log(allUser.value)
+})
 </script>
 
 <template>
     <article class="flex flex-col pt-10 gap-6 px-2 scrollbar-hide scroll-smooth overflow-y-auto ">
-        <section
+        <section @click.stop="$emit('openChat', ['user', el])"
             class="flex hover:bg-white/10 flex-row justify-between jutify-center items-center w-full"
-            v-for="el in userAll" :key="el.id" @click="">
+            v-for="el in allUser" :key="el.id">
             <section class="flex flex-row gap-10 items-center">
-                <img :src="el.src" class="w-10 h-10">
+                <img :src="el.logo" class="w-10 h-10">
                 <p class="text-[18px] text-white font-bold">
-                    {{ el.name }}</p>
+                    {{ el.userName }}</p>
             </section>
-            <section class="flex justify-end items-center" v-if='"isFavouritesUser" in el && "newMessage" in el'>
+            <!---<section class="flex justify-end items-center" v-if='"isFavouritesUser" in el && "newMessage" in el'>
                 <svg width="40" v-if="!el.isFavouritesUser && !el.newMessage" height="40" viewBox="0 0 40 40"
                     fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -140,7 +35,7 @@ const userAll = ref([
                 </svg>
                 <div class="text-[20px] bg-white rounded-full p-2" v-if="el.newMessage && !el.isFavouritesUser"></div>
                 
-            </section>
+            </section>-->
         </section>
     </article>
 </template>

@@ -176,8 +176,8 @@ function activatedFolder(el: EventTarget | null) {
                     :data-id="el.id">{{ el.name }}</p>
             </section>
         </article>
-        <SideBarLeftGroup @open-chat="(chat: Number) => { $emit('openChat', chat) }" v-if='typeSideBar == "group"' />
-        <SideBarLeftUser v-if='typeSideBar == "user"' />
+        <SideBarLeftGroup @open-chat="(chatData: Number) => { $emit('openChat', chatData) }" v-if='typeSideBar == "group"' />
+        <SideBarLeftUser @open-chat="(chatData: object) => {$emit('openChat', chatData)}" v-if='typeSideBar == "user"' />
         <SideBarLeftSetting v-if='typeSideBar == "setting"' />
     </section>
 </template>

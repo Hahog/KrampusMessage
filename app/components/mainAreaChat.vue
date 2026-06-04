@@ -2,7 +2,7 @@
 import { messageManagment } from '~/composabels/messageManagment'
 import type { genericRef } from '~~/types/other'
 
-const activeChat = ref(inject("idChatOpen"))
+const activeChat = ref(inject("ChatOpen"))
 
 
 
@@ -22,7 +22,7 @@ watch(activeChat, (newVal, oldVal) => {
             break
         case "user":
             typeAreaChat.value = "User"
-            
+            console.log(activeChat.value)
             break
     }
 

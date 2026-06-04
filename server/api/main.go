@@ -247,7 +247,7 @@ func callCount(room string, exclude *Client) int {
 // Рассылка всем call-клиентам в комнате, кроме отправителя
 func broadcast(room string, data []byte, sender *Client) {
 	for c := range rooms[room] {
-		if c.isCall && c != sender {
+		if c != sender {
 			select {
 			case c.send <- data:
 			default:
@@ -310,7 +310,7 @@ func readPump(c *Client) {
 	}()
 	for {
 		_, msg, err := c.conn.ReadMessage()
-		fmt.Println(msg)
+		fmt.Println(string(msg))
 		if err != nil {
 			break
 		}
