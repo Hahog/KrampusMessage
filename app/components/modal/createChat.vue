@@ -5,6 +5,12 @@ const dataChat: genericRef<{name: string, setting: {type: string}}> = ref({name:
 const nameFolder = ref()
 const typeCreate = ref("chat")
 const settingUser = useSettingUser()
+const Folder = ref('')
+
+
+
+let folder = defineProps(['folderGroup'])
+folder = folder.folderGroup
 </script>
 
 <template>
@@ -37,7 +43,14 @@ const settingUser = useSettingUser()
                             </label>
                         </article>
                     </section>
-                    <button @click.stop="$emit('createChat', nameChat)"
+                    <section class="flex flex-col gap-5 justify-start w-full">
+                        <p class="text-[25px] w-full text-start text-white font-bold">{{settingUser.language == 'Englend' ? 'Folder:' : 'Папка:'}}</p>
+                        <select v-model="Folder" class="border-1 text-white border-white bg-inherit hover:bg-white/10 px-10 py-3 text-[20px] placeholder:text-white/30">
+                            <option>1111</option>
+                            <option v-if="el in folder" :key="el.id" :data-id="el.id"> {{ el.name }}</option>
+                        </select>
+                    </section>
+                    <button @click.stop="$emit('createChat', nameChat, typeCreate, folder.filter((el) => el.name == Folder)[0].id)"
                         class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-1/2 ">{{settingUser.language == 'Englend' ? 'Create' : 'Создать'}}</button>
                 </form>
             </section>

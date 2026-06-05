@@ -15,11 +15,11 @@ export class messageManagment {
 
     }
 
-    async deleteMessage(idMessage: string) {
+    async deleteMessage(idMessage: string, idRoom: string) {
 
     }
 
-    async editMessage(idMessage: string, editData: string) {
+    async editMessage(idMessage: string, editData: string, idRoom: string) {
 
     }
 

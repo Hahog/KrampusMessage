@@ -36,7 +36,7 @@ onMounted(() => {
                     <rect height="19.975" width="3.4" x="53.066" y="44.962" />
                 </g>
             </svg>
-            <svg @click.stop="$emit('editMessage', userMessage.id)" class="fill-white" width="25px" height="25px" data-name="Layer 1" id="Layer_1" viewBox="0 0 32 32"
+            <svg @click.stop="$emit('editMessage', userMessage)" class="fill-white" width="25px" height="25px" data-name="Layer 1" id="Layer_1" viewBox="0 0 32 32"
                 xmlns="http://www.w3.org/2000/svg">
                 <title />
                 <path

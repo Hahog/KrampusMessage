@@ -55,7 +55,7 @@ export class GroupManagment {
 
     }
 
-    liveGroup() {
+    liveGroup(idUser: string, idRoom: string) {
 
     }
 
@@ -64,15 +64,18 @@ export class GroupManagment {
         return true
     }
 
-    createGroup(nameGroup: string) {
+    createGroup(nameGroup: String) {
 
     }
 
-    createChat() {
+    createFolder(nameFolder: string, idRoom: string) {
+        
+    }
+    createChat(nameChat: string, typeChat: string, idFolder: string, idRoom: string) {
 
     }
 
-    createRole() {
+    createRole(nameRole: string, setting: object, idRoom: string) {
 
     }
 
@@ -260,7 +263,7 @@ export class GroupManagment {
     }
 
     requreAllMessageGroup(idGroup: string) {
-        
+
     }
 }
 

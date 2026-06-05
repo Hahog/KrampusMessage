@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { messageManagment } from '~/composabels/messageManagment';
+import type { genericRef } from '~~/types/other';
 
 const searchData = ref()
 const activeSearch = ref(false)
+const editMessageStatus = ref(false)
 const messageClass = new messageManagment()
 const user = useUserStore()
 let room: object = defineProps(["Room"])
@@ -12,6 +14,28 @@ const messageUser = ref()
 onMounted(async () => {
     messageUser.value = await messageClass.getUserChatMessage(user.userData.id, room[1].id)
 })
+
+const messageData: genericRef<string> = ref('')
+const idMessageEdit = ref('')
+
+const funcMessage = async () => {
+    if (editMessageStatus) {
+        await messageClass.editMessage(idMessageEdit.value, messageData.value ? messageData.value : "", room.id)
+        messageData.value = ''
+        idMessageEdit.value = ''
+    } else {
+        await messageClass.createNewMessage(messageData.value ? messageData.value : '', room.id)
+        messageData.value = ''
+    }
+}
+
+
+function editMessage(dataMessage: object) {
+    editMessageStatus.value = true
+    idMessageEdit.value = dataMessage.id
+    messageData.value = dataMessage.data
+
+}
 
 </script>
 
@@ -58,7 +82,7 @@ onMounted(async () => {
                 :class='{ "w-full h-full col-span-4 flex flex-col pb-10 justify-between relative scrollbar-hide scroll-smooth overflow-y-auto": !Boolean(rightSideBarType), "w-full h-full col-span-3 flex pb-10 flex-col justify-between relative scrollbar-hide scroll-smooth overflow-y-auto": Boolean(rightSideBarType) }'>
                 <article
                     class="h-fit px-30 py-15 flex pb-50 w-full flex-col gap-10 scrollbar-hide scroll-smooth overflow-y-auto">
-                    <MessageUserChat :message-data="el" v-for="el in messageUser" />
+                    <MessageUserChat @deleteMessage="(idMessage: string) => {messageClass.deleteMessage(idMessage, room.id)}" @editMessage="editMessage" :message-data="el" v-for="el in messageUser" />
                 </article>
                 <article class="left-[50%] bottom-0 pb-10 fixed">
                     <section class="flex felx-row w-fit bg-body-100 gap-5 px-4 py-2 items-center rounded-4xl">
@@ -80,9 +104,9 @@ onMounted(async () => {
                                     fill="white" />
                             </svg>
                         </article>
-                        <textarea type="text" placeholder="Message@here" v-model="aaaa" autocomplete="off"
+                        <textarea type="text" placeholder="Message@here" v-model="messageData" autocomplete="off"
                             class="w-100 h-15 box-border scrollbar-hide scroll-smooth resize-none p-4 overflow-y-auto flex text-white text-[20px] placeholder:text-white placeholder:text-[20px] focus:outline-none"></textarea>
-                        <svg width="39" height="41" viewBox="0 0 59 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg @click.stop="funcMessage" width="39" height="41" viewBox="0 0 59 61" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M0.0078125 1.12415C-0.0902225 0.326385 0.744903 -0.255541 1.45898 0.113403L58.0566 29.3556C58.7779 29.7283 58.7779 30.7603 58.0566 31.1329L1.45898 60.3751C0.744937 60.7439 -0.0902032 60.1621 0.0078125 59.3644L3.01465 34.8898C3.07036 34.4365 3.42692 34.0782 3.87988 34.0197L33.1094 30.2443L3.87988 26.4689C3.42694 26.4104 3.07037 26.052 3.01465 25.5988L0.0078125 1.12415Z"
                                 fill="white" />
