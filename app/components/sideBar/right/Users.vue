@@ -4,6 +4,7 @@ import { GroupManagment } from '~/composabels/groupManagment'
 let roomData = defineProps(["RoomData"])
 roomData = roomData.RoomData
 console.log(roomData)
+const settingUser = useSettingUser()
 
 let allUsersGroup = ref()
 
@@ -38,7 +39,7 @@ function openDropUser(el: HTMLElement) {
             </section>
             <p class="text-[18px] text-white/50">{{ roomData.description }}</p>
             <section class="flex flex-col gap-2 p-2 justiyf-start items-start">
-                <p class="text-[15px] text-white/50 p-2">Members</p>
+                <p class="text-[15px] text-white/50 p-2">{{settingUser.language == 'Englend' ? 'Members' : 'Пользователи'}}</p>
                 <hr class="w-full h-[5px] bg-white rounded-full">
             </section>
         </article>

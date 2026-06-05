@@ -14,6 +14,7 @@ const activeUserInWebRTCCall: genericRef<[{ id: String, users: [CallParticipant]
 const activeRoleSetting = ref()
 const addUserEmail = ref()
 const activeModelCreateRole = ref()
+const settingUser = useSettingUser()
 
 onMounted(async () => {
     groupClass = new GroupManagment()
@@ -283,19 +284,19 @@ function returnArrayUserCall(id) {
                 <section
                     class="flex flex-col h-screen pb-50 gap-6 px-1 overflow-y-auto scrollbar-hide scroll-smooth w-full">
                     <article>
-                        <p class=" pl-1 text-[20px] text-white font-bold">Name group:</p>
+                        <p class=" pl-1 text-[20px] text-white font-bold">{{settingUser.language == 'Englend' ? 'Name group:' : 'Название группы:'}}</p>
                         <input
                             class="w-full border-b-3 border-white focus:outline-none placeholder:text-[20px] placeholder:text-white text-white text-[20px] py-2 pl-1"
                             :placeholder="activeGroup.name">
                     </article>
                     <article>
-                        <p class=" pl-1 text-[20px] text-white font-bold">Description group:</p>
+                        <p class=" pl-1 text-[20px] text-white font-bold">{{settingUser.language == 'Englend' ? 'Description group:' : 'Описание группы:'}}</p>
                         <textarea
                             class="box-border scrollbar-hide scroll-smooth resize-none  overflow-y-auto w-full border-b-3 border-white focus:outline-none placeholder:text-[20px] placeholder:text-white text-white text-[20px] py-2 pl-1"
                             :placeholder="activeGroup.description"></textarea>
                     </article>
                     <article>
-                        <p class=" pl-1 text-[20px] text-white font-bold">Users group:</p>
+                        <p class=" pl-1 text-[20px] text-white font-bold">{{settingUser.language == 'Englend' ? 'Users group:' : 'Пользователи группы:'}}</p>
                         <section
                             class="w-full h-50 border-b-3 pt-2 border-white scrollbar-hide scroll-smooth resize-none  overflow-y-auto">
                             <OtherSideBarGroupSettingUser
@@ -304,7 +305,7 @@ function returnArrayUserCall(id) {
                         </section>
                     </article>
                     <article>
-                        <p class="pl-1 text-[20px] text-white font-bold">Role group: </p>
+                        <p class="pl-1 text-[20px] text-white font-bold">{{settingUser.language == 'Englend' ? 'Role group:' : 'Роли группы:'}}</p>
                         <section class="w-full h-50  pt-2  scrollbar-hide scroll-smooth resize-none  overflow-y-auto">
                             <OtherSideBarGroupSettingRole
                                 @settingRole="(roleData: object) => { activeRoleSetting = roleData }"
@@ -313,19 +314,17 @@ function returnArrayUserCall(id) {
                         </section>
                         <section class="w-full flex border-b-3 border-white justify-center items-center p-2">
                             <button @click.stop="activeModelCreateRole = true"
-                                class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-3/4 ">Создать
-                                роль!</button>
+                                class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-3/4 ">{{settingUser.language == 'Englend' ? 'Create role' : 'Создать роль'}}</button>
                         </section>
                     </article>
                     <article>
-                        <p class="pl-1 pb-5 text-[20px] text-white font-bold">Add user: </p>
+                        <p class="pl-1 pb-5 text-[20px] text-white font-bold">{{settingUser.language == 'Englend' ? 'Add user:' : 'Добавить пользователя:'}}</p>
                         <input v-model="addUserEmail"
                             class="w-full pb-4 focus:outline-none placeholder:text-[20px] placeholder:text-white text-white text-[20px] py-2 pl-1"
-                            placeholder="emailUser">
+                            :placeholder="settingUser.language == 'Englend' ? 'emailUser' : 'Почта пользователя'">
                         <section class="w-full flex justify-center p-2 border-b-3 border-white">
                             <button @click.stop="groupClass.addNewUser(activeGroup.id, addUserEmail)"
-                                class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-3/4 ">Add
-                                user</button>
+                                class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-3/4 ">{{settingUser.language == 'Englend' ? 'Add user:' : 'Добавить пользователя:'}}</button>
                         </section>
                     </article>
                 </section>
@@ -334,7 +333,7 @@ function returnArrayUserCall(id) {
                 <article class="flex flex-row justify-between px-4 py-2 border-b-4 border-body-100">
                     <section class="flex flex-col gap-1 text-start">
                         <h2 class="text-[26px] text-white/80">{{ activeGroup.name }}</h2>
-                        <p class="text-[16px] text-white">{{ activeGroup.users }} members</p>
+                        <p class="text-[16px] text-white">{{ activeGroup.users }} {{settingUser.language == 'Englend' ? 'members' : 'пользователей'}}</p>
                     </section>
                     <section class="flex flex-row gap-10 justify-center items-center">
                         <svg @click="optionGroup = true" width="7" height="34" viewBox="0 0 7 34" fill="none"
