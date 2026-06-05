@@ -258,5 +258,9 @@ export class GroupManagment {
     addNewUser(idGroup: string, userEmail: string) {
 
     }
+
+    requreAllMessageGroup(idGroup: string) {
+        
+    }
 }
 

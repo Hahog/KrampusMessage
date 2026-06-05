@@ -25,7 +25,7 @@ onMounted(() => {
             </article>
         </section>
         <section v-if="isHover" class="flex flex-row gap-1 items-center absolute top-[-10px]">
-            <svg @click.stop="$emit('deleteMessage')" class="fill-red-500" enable-background="new 0 0 91 91" height="30px" id="Layer_1" version="1.1"
+            <svg @click.stop="$emit('deleteMessage', userMessage.id)" class="fill-red-500" enable-background="new 0 0 91 91" height="30px" id="Layer_1" version="1.1"
                 viewBox="0 0 91 91" width="30px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g>
@@ -36,7 +36,7 @@ onMounted(() => {
                     <rect height="19.975" width="3.4" x="53.066" y="44.962" />
                 </g>
             </svg>
-            <svg @click.stop="$emit('editMessage')" class="fill-white" width="25px" height="25px" data-name="Layer 1" id="Layer_1" viewBox="0 0 32 32"
+            <svg @click.stop="$emit('editMessage', userMessage.id)" class="fill-white" width="25px" height="25px" data-name="Layer 1" id="Layer_1" viewBox="0 0 32 32"
                 xmlns="http://www.w3.org/2000/svg">
                 <title />
                 <path
