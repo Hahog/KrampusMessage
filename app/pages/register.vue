@@ -29,7 +29,7 @@ async function register() {
         const data = await auth.registerUser(registerData)
 
         if (!data.sucess) {
-            if ("code" in data.error && data.error) {
+            if(typeof data.error == "object") {
                 errorData.value = data.error.message ? data.error.message : ''
             } else {
                 errorData.value = data.error ? data.error : ''
@@ -74,11 +74,9 @@ async function register() {
             <p class="text-[16px] font-bold text-red-500" v-if="errorData">{{ errorData }}</p>
             <p class="text-[16px] font-bold text-white bg-green-500" v-if="responsData">{{ responsData }}</p>
             <button class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-1/2 "
-                @click.prevent="register()">{{ settingUser.language == 'Englend' ? 'Register' :
-                'Зарегистрироваться'}}</button>
+                @click.prevent="register()">{{ settingUser.language == 'Englend' ? 'Register' :'Зарегистрироваться'}}</button>
         </form>
-        <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="auth">{{ settingUser.language == "Englend" ? 'Do
-            you have an account ? Enter!' : 'Есть аккаунт ? Войдите!'}}</NuxtLink>
+        <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="auth">{{ settingUser.language == "Englend" ? 'Do you have an account ? Enter!' : 'Есть аккаунт ? Войдите!'}}</NuxtLink>
     </section>
 </template>
 

@@ -17,7 +17,7 @@ async function auth() {
         const data = await auth.startAuth({ email: emailUser.value, password: passwordUser.value })
 
         if(!data.sucess) {
-            if("code" in data.error && data.error) {
+            if(typeof data.error == "object") {
                 errorData.value = data.error.message ? data.error.message : ''
             } else {
                 errorData.value = data.error ? data.error : ''
@@ -61,11 +61,8 @@ function restructurTheme() {
             <button class="border-1 text-white/50 hover:text-white px-5 py-2 text-[20px]  border-white w-1/2 "
                 @click.prevent="auth()">{{ settingUser.language == 'Englend' ? 'Enter' : 'Войти' }}</button>
         </form>
-        <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="register">{{ settingUser.language == 'Englend'
-            ?
-            'No account? Create it!' : 'Нет аккаунта? Создайте!'}}</NuxtLink>
-        <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="recoveryPassword">{{ settingUser.language ==
-            'Englend' ? 'I forgot my password!' : 'Забыл пароль!' }}</NuxtLink>
+        <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="register">{{ settingUser.language == 'Englend' ? 'No account? Create it!' : 'Нет аккаунта? Создайте!'}}</NuxtLink>
+        <NuxtLink class="text-[20px] text-white/50 hover:text-white" to="recoveryPassword">{{ settingUser.language == 'Englend' ? 'I forgot my password!' : 'Забыл пароль!' }}</NuxtLink>
 
     </section>
 </template>
