@@ -39,7 +39,7 @@ class Auth {
         this.#userStore = useUserStore()
     }
 
-    async startAuth(user: UserData) {
+    async startAuth(user: UserData): Promise<AuthRespons> {
 
         /*this.#dataUser.forEach((el) => {
             if (el.email == user.email && el.password == user.password) {
@@ -63,9 +63,10 @@ class Auth {
 
         this.#noValidateData = user
         if(this.#validationData()) {
-            this.#returnStatus(await this.#authUser())
+            const data = await this.#authUser()
+            return data
         } else {
-            this.#returnStatus({sucess: false, error: "Использованы запрещённые или не верные символы"})
+            return {sucess: false, error: "Использованы запрещённые или не верные символы"}
         }
     }
 
@@ -98,7 +99,7 @@ class Auth {
 
     async #authUser(): Promise<AuthRespons> {
         try {
-            const promis = await fetch("", {
+            const promis = await fetch("http://localhost:8080/api/v1/auth/signin", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,8 +108,11 @@ class Auth {
             })
 
             if (promis.ok) {
-                const user = await promis.json()
-                this.#userStore.userData = user
+                const token = await promis.json()
+                //this.#userStore.userData = user
+
+                this.#userStore.refreshToken = token.refresh_token
+                this.#userStore.accessToken = token.refresh_token
                 return { sucess: true, data: "Вы успешно вошли" }
             } else {
 
@@ -158,7 +162,7 @@ class Auth {
             if(respons.status) {
                 return {sucess: true, data: "Пользователь успешно создан"}
             } else {
-                return {sucess: false, error: "Попробуйте позже"}
+                return {sucess: false, error: await respons.json()}
             }
             
         } else {
