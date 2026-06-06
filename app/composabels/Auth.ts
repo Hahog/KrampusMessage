@@ -1,7 +1,7 @@
 import { useUserStore } from '@/stores/user'
 import type { AuthRespons } from "../../types/api/respons"
-import type { UserData } from "../../types/forms"
-import type { User } from '~~/types/other'
+import type { registerData, UserData } from "../../types/forms"
+import type { genericRef, User } from '~~/types/other'
 
 
 class Auth {
@@ -32,7 +32,7 @@ class Auth {
         },
     ]
     #user: unknown
-    #noValidateData: UserData = { email: "", password: "" }
+    #noValidateData: UserData | registerData = { email: "", password: "" }
     #userStore
 
     constructor() {
@@ -41,7 +41,7 @@ class Auth {
 
     async startAuth(user: UserData) {
 
-        this.#dataUser.forEach((el) => {
+        /*this.#dataUser.forEach((el) => {
             if (el.email == user.email && el.password == user.password) {
                 const NewUser = {
                     id: el.id,
@@ -59,14 +59,14 @@ class Auth {
                 console.log(NewUser)
                 this.#userStore.userData = NewUser
             }
-        })
+        })*/
 
-        /*this.#noValidateData = user
+        this.#noValidateData = user
         if(this.#validationData()) {
-            this.returnStatus(await this.authUser())
+            this.#returnStatus(await this.#authUser())
         } else {
-            this.returnStatus({sucess: false, error: "Использованы запрещённые или не верные символы"})
-        }*/
+            this.#returnStatus({sucess: false, error: "Использованы запрещённые или не верные символы"})
+        }
     }
 
     #validationData(): boolean {
@@ -76,18 +76,19 @@ class Auth {
         if (Object.keys(this.#noValidateData).indexOf("email") != -1) {
             const regEx = /^([a-zA-Z0-9\.\_\%\+\-\=\#]+)@([a-zA-Z]+)\.([a-zA-z]+)$/
 
-            if (!regEx.test(this.#noValidateData.email) && regSql.test(this.#noValidateData.email)) {
+            if (!regEx.test(this.#noValidateData.email)) {
+                
                 error++;
             }
         }
         if (Object.keys(this.#noValidateData).indexOf("password")) {
             const regExp = /^([\w\.\_\%\+\-\#]{12,})$/
 
-            if (!regExp.test(this.#noValidateData.password) && regSql.test(this.#noValidateData.password)) {
+            if (!regExp.test(this.#noValidateData.password)) {
                 error++;
             }
         }
-
+     
         if (error != 0) {
             return false
         } else {
@@ -137,9 +138,33 @@ class Auth {
         }
     }
 
-    #returnStatus(value: AuthRespons): object {
+    #returnStatus(value: AuthRespons): AuthRespons {
         return value
     }
-}
+
+    async registerUser(registerData: genericRef<registerData>): Promise<AuthRespons> {
+        this.#noValidateData = registerData.value ? registerData.value : {username: '',lastname: '',firstname: '',password: '',email: '',two_fa_enabled: false}
+        
+        if(this.#validationData()) {
+            console.log(this.#noValidateData)
+            const respons = await fetch('http://localhost:8080/api/v1/auth/signup', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(this.#noValidateData)
+            })
+
+            if(respons.status) {
+                return {sucess: true, data: "Пользователь успешно создан"}
+            } else {
+                return {sucess: false, error: "Попробуйте позже"}
+            }
+            
+        } else {
+            return {sucess: false, error: "Данные не прошли валидацию"}
+        }
+    }
+ }
 
 export { Auth }

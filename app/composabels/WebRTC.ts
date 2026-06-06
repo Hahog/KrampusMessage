@@ -456,7 +456,6 @@ export class WebRTC extends Signaling {
         this.sendSignalStatusUser("Close")
 
         this.stopTrack()
-        this.#stream.getTracks().forEach(track => track.stop());
         this.#callStore.peerConnectionUsers.clear()
         this.#callStore.statusUser.viewingStream.status = false
         this.#callStore.statusUser.audio = false
